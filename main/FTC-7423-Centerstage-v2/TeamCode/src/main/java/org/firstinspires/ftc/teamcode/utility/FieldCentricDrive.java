@@ -87,4 +87,19 @@ public class FieldCentricDrive {
         fr.setPower(0.74*frp);
         br.setPower(0.74*brp);
     }
+    /**
+     * Get robot heading in radians
+     * @return robot heading
+     */
+    public double getHeading(){
+        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+    }
+    /**
+     * Get robot heading in a specified angle unit
+     * @param angleUnit angle unit to return heading in
+     * @return robot heading
+     */
+    public double getHeading(AngleUnit angleUnit){
+        return imu.getRobotYawPitchRollAngles().getYaw(angleUnit);
+    }
 }

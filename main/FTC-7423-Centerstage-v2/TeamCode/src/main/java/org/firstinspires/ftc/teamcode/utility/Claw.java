@@ -1,23 +1,34 @@
 package org.firstinspires.ftc.teamcode.utility;
 
 import com.qualcomm.robotcore.hardware.Servo;
-;
-import org.jetbrains.annotations.NotNull;
 
 public class Claw {
-    private Servo claw;
-
-    private double[] posValues;
+    Servo claw;
+    double[] clawposs;
+    double openPos,halfOpenPos, closePos;
     /**
-     * @param claw claw servo
-     * @param openPos1 partially opened servo position(drop one pixel)
-     * @param openPos2 fully opened servo position(drop all pixels)
-     * @param closePos fully closed servo position(grab pixels)
-     * @param restPos servo position while claw in basket and awaits pixels from intake
+     * Initialize Claw
+     * @param claw Servo for controlling the claw
+     * @param openPos position of the claw when it is open - drop all pixels
+     * @param halfOpenPos position of the claw when it is half open - drop one pixel
+     * @param closePos position of the claw when it is closed - pick up pixels
      */
-    public Claw(@NotNull Servo claw, @NotNull double openPos1, @NotNull double openPos2, @NotNull double closePos, @NotNull double restPos){
+    public Claw(Servo claw, double closePos, double halfOpenPos, double openPos){
         this.claw = claw;
-        this.posValues = new double[]{closePos, openPos1, openPos2, restPos};
+        this.openPos = openPos;
+        this.halfOpenPos = halfOpenPos;
+        this.closePos = closePos;
+        clawposs = new double[]{closePos, halfOpenPos, openPos};
+        claw.setPosition(openPos);
+    }
+    public void open(){
+        claw.setPosition(openPos);
+    }
+    public void halfOpen(){
+        claw.setPosition(halfOpenPos);
+    }
+    public void close(){
+        claw.setPosition(closePos);
     }
     public void setPos(double pos){
         claw.setPosition(pos);
@@ -25,4 +36,24 @@ public class Claw {
     public double getPos(){
         return claw.getPosition();
     }
+    public void ezSetPos(int posID){
+        if(posID > clawposs.length) throw new IllegalArgumentException("posID is out of bounds");
+        claw.setPosition(clawposs[posID]);
+    }
+    public void ezSetPos(String posName){
+        switch(posName){
+            case "open":
+                open();
+                break;
+            case "halfOpen":
+                halfOpen();
+                break;
+            case "close":
+                close();
+                break;
+            default:
+                throw new IllegalArgumentException("posName is not a valid position name. Valid names are \"open\", \"halfOpen\", and \"close\"");
+        }
+    }
+
 }

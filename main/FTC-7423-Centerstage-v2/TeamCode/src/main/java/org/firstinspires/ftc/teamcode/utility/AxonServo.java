@@ -14,6 +14,10 @@ public class AxonServo  {
         this.motor = motor;
         this.feedback = potentiometer;
     }
+    public AxonServo(Servo motor, AnalogInput potentiometer){
+        this.motor = (ServoImplEx) motor;
+        this.feedback = potentiometer;
+    }
     public void reset(){
         motor.setPosition(0);
     }
@@ -26,13 +30,27 @@ public class AxonServo  {
     public double getPosDegrees(){
         return feedback.getVoltage()/3.3*360;
     }
+    /**
+     * Get the position of the servo between 0 and 1
+     * @return position in radians
+     */
     public void setPos(double pos){
         motor.setPosition(pos+restPos);
     }
+    /**
+     * Set the position of the servo in degrees
+     * @param pos position in degrees
+     */
     public void setPosDegrees(double pos){
-        motor.setPosition(pos/360 + restPos);
+        motor.setPosition(pos/355 + restPos);
     }
-
+    /**
+     * Set the position of the servo in radians
+     * @param pos position in radians
+     */
+    public void setPosRadians(double pos){
+        motor.setPosition(Math.toDegrees(pos)/355 + restPos);
+    }
     public void calibrate(){
         //PUT THE SERVO IN THE REST POSITION
         restPos = getPos();
