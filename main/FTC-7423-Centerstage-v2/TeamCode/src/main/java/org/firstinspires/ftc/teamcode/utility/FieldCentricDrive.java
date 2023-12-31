@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class FieldCentricDrive {
     DcMotor fl, fr, bl, br;
     IMU imu;
+    double motorspeeed = 0.5;
     /**
      * Initialize motors
      * @param hardwareMap hardwareMap from opmode
@@ -28,6 +29,24 @@ public class FieldCentricDrive {
         imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
         imu.initialize(parameters);
+    }
+    /**
+     * Initialize motors
+     * @param hardwareMap hardwareMap from opmode
+     * @param motorspeed speed of motors
+     */
+    public FieldCentricDrive(HardwareMap hardwareMap, double motorspeed){
+        fl = hardwareMap.dcMotor.get("fl");
+        fr = hardwareMap.dcMotor.get("fr");
+        bl = hardwareMap.dcMotor.get("bl");
+        br = hardwareMap.dcMotor.get("br");
+        //reverse motors
+        fl.setDirection(DcMotor.Direction.REVERSE);
+        bl.setDirection(DcMotor.Direction.REVERSE);
+        imu = hardwareMap.get(IMU.class, "imu");
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
+        imu.initialize(parameters);
+        this.motorspeeed = motorspeed;
     }
     /**
      * Drive based off of gamepad inputs
@@ -47,10 +66,10 @@ public class FieldCentricDrive {
         double frp = -(rotY - rotX - rx) / denominator;
         double brp = -(rotY + rotX - rx) / denominator;
 
-        fl.setPower(0.74*flp);
-        bl.setPower(0.74*blp);
-        fr.setPower(0.74*frp);
-        br.setPower(0.74*brp);
+        fl.setPower(motorspeeed*flp);
+        bl.setPower(motorspeeed*blp);
+        fr.setPower(motorspeeed*frp);
+        br.setPower(motorspeeed*brp);
     }
     /**
      * Drive based off of gamepad
@@ -82,10 +101,10 @@ public class FieldCentricDrive {
         brp = brp * (1 + 2*gamepad1.left_trigger);
 
 
-        fl.setPower(0.74*flp);
-        bl.setPower(0.74*blp);
-        fr.setPower(0.74*frp);
-        br.setPower(0.74*brp);
+        fl.setPower(motorspeeed*flp);
+        bl.setPower(motorspeeed*blp);
+        fr.setPower(motorspeeed*frp);
+        br.setPower(motorspeeed*brp);
     }
     /**
      * Get robot heading in radians
