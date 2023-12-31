@@ -13,7 +13,7 @@ public class TeleOp extends OpMode {
     LinkageArm arm;
     @Override
     public void init() {
-        arm = new LinkageArm(hardwareMap.servo.get("linkage"), 175);
+        arm = new LinkageArm(hardwareMap.servo.get("linkage"), 175,236);
         drive = new FieldCentricDrive(hardwareMap);
         armServo = new AxonServo(hardwareMap.servo.get("armservo"), hardwareMap.analogInput.get("axonin"));
     }

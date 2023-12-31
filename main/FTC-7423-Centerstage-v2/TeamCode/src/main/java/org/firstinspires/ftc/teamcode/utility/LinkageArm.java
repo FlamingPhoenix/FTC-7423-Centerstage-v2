@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 public class LinkageArm {
     Servo motor;
-    double bar1len, bar2len,offset;
+    double bar1len, bar2len,offset,maxLen;
 
     /**
      * Initialize LingateArm
@@ -19,12 +19,21 @@ public class LinkageArm {
         this.bar1len = bar1len;
         this.bar2len = bar2len;
         this.offset = offset;
+        this.maxLen = bar1len+bar2len-offset;
+    }
+    public LinkageArm(Servo motor, double bar1len, double bar2len){
+        this.motor = motor;
+        this.bar1len = bar1len;
+        this.bar2len = bar2len;
+        this.offset = 0;
+        this.maxLen = bar1len+bar2len;
     }
     public LinkageArm(Servo motor, double bar1len){
         this.motor = motor;
         this.bar1len = bar1len;
         this.bar2len = bar1len;
         this.offset = 0;
+        this.maxLen = bar1len+bar2len;
     }
     /**
      * Initialize LingateArm
@@ -38,6 +47,7 @@ public class LinkageArm {
         this.bar1len = bar1len;
         this.bar2len = bar2len;
         this.offset = offset;
+        this.maxLen = bar1len+bar2len-offset;
     }
 
     /**
@@ -45,8 +55,10 @@ public class LinkageArm {
      * @param len length in the SAME UNIT as bar1len and bar2len
      */
     public void setLen(double len){
+        len = Math.min(len,maxLen);
         double angle = Math.acos(bar1len*bar1len+len*len-(bar2len-offset)*(bar2len-offset))/(2*bar1len*len);
-        motor.setPosition(angle);
+        //servo range 300 degrees
+        motor.setPosition(Math.toDegrees(angle)/300);
     }
     /**
      * Get the length of the linkage arm
