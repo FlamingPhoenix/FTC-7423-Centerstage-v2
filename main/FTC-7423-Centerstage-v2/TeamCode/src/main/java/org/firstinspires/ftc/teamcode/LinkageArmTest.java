@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.utility.FieldCentricDrive;
 import org.firstinspires.ftc.teamcode.utility.LinkageArm;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
-public class TeleOp extends OpMode {
+public class LinkageArmTest extends OpMode {
     FieldCentricDrive drive;
     AxonServo armServo;
     LinkageArm arm;

@@ -15,15 +15,16 @@ import com.qualcomm.robotcore.hardware.Servo;
  */
 @TeleOp
 public class FindServoPosition extends OpMode {
-    String[] servoNames ={"claw"};
-    Servo[] servos;
+    String[] servoNames ={"arm"};
+    Servo[] servos = {};
     int selectedServo = 0;
     int incrementMultiplier = 1;
     boolean didchange = false;
     @Override
     public void init() {
-        for(String name : servoNames){
-            servos[servos.length] = hardwareMap.servo.get(name);
+        servos = new Servo[servoNames.length];
+        for(int i = 0; i < servoNames.length; i++){
+            servos[i] = hardwareMap.servo.get(servoNames[i]);
         }
     }
     @Override

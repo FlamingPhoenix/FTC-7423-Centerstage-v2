@@ -20,6 +20,9 @@ public class AxonServo  {
         this.motor = motor;
         this.feedback = potentiometer;
     }
+    public AxonServo(ServoImplEx motor){
+        this.motor = motor;
+    }
     /**
      * Initialize AxonServo
      * @param motor servo for controlling the servo
@@ -95,5 +98,6 @@ public class AxonServo  {
     public void calibrate(double restPos){
         this.restPos = restPos;
     }
+
 
 }
