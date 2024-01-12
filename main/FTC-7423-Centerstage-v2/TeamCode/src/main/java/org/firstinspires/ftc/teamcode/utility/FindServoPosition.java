@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  */
 @TeleOp
 public class FindServoPosition extends OpMode {
-    String[] servoNames ={"arm"};
+    String[] servoNames ={"arm","wrist","grabber"};
     Servo[] servos = {};
     int selectedServo = 0;
     int incrementMultiplier = 1;
@@ -36,10 +36,10 @@ public class FindServoPosition extends OpMode {
             incrementMultiplier = 1;
         }
         if(gamepad1.dpad_right && !didchange){
-            selectedServo = (selectedServo + 1) % servos.length;
+            selectedServo = (selectedServo + 1) % (servos.length-1);
             didchange = true;
         }else if(gamepad1.dpad_left && !didchange){
-            selectedServo = (selectedServo - 1) % servos.length;
+            selectedServo = (selectedServo - 1) % (servos.length-1);
             didchange = true;
         }else if(gamepad1.dpad_up && !didchange){
             servos[selectedServo].setPosition(servos[selectedServo].getPosition() + 0.001*incrementMultiplier);
@@ -47,14 +47,13 @@ public class FindServoPosition extends OpMode {
         }else if(gamepad1.dpad_down && !didchange){
             servos[selectedServo].setPosition(servos[selectedServo].getPosition() - 0.001*incrementMultiplier);
             didchange = true;
-        }else if(gamepad1.left_stick_y > 0.5 && !didchange){
+        }else if(gamepad1.left_stick_y > 0.1 && !didchange){
             servos[selectedServo].setPosition(servos[selectedServo].getPosition() + 0.1);
             didchange = true;
-        }else if(gamepad1.left_stick_y < -0.5 && !didchange) {
+        }else if(gamepad1.left_stick_y < -0.1 && !didchange) {
             servos[selectedServo].setPosition(servos[selectedServo].getPosition() - 0.1);
             didchange = true;
-        }
-        else{
+        } else{
             didchange = false;
         }
         for(int i = 0; i < servos.length; i++){

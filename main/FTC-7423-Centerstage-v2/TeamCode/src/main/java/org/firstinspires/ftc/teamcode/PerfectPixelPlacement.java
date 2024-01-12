@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
+import org.apache.commons.math3.util.FastMath;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.utility.AxonServo;
 import org.firstinspires.ftc.teamcode.utility.LinkageArm;
@@ -31,14 +32,29 @@ public class PerfectPixelPlacement {
     }
     public void executeWithSensor(double targetHeight){
         double distance = input.getDistance(DistanceUnit.MM);
-        //double len = Math.sqrt(Math.pow(distance,2)+Math.pow(targetHeight,2)-2*distance*targetHeight*-0.5);
-        //double langle = Math.asin((sin60deg*targetHeight)/len); //IN RADIANS
         double sc = (distance+0.5)*(oy/60)+ox;
         double sb = sec30deg*(cos30deg*targetHeight-oy);
         double sa = Math.sqrt(Math.pow(sb,2)+Math.pow(sc,2)-2*sb*sc*-0.5);
-        double angle = Math.asin((sin60deg*sb)/sa); //IN RADIANS
+        double angle = FastMath.asin((sin60deg*sb)/sa); //IN RADIANS
 
         armServo.setPosRadians(angle);
         arm.setLen(sa);
+    }
+    public void executeWithReading(double targetHeight,double distance){
+        double sc = (distance+0.5)*(oy/60)+ox;
+        double sb = sec30deg*(cos30deg*targetHeight-oy);
+        double sa = Math.sqrt(Math.pow(sb,2)+Math.pow(sc,2)-2*sb*sc*-0.5);
+        double angle = FastMath.asin((sin60deg*sb)/sa); //IN RADIANS
+
+        armServo.setPosRadians(angle);
+        arm.setLen(sa);
+    }
+    public double[] test(double targetHeight, double distance){
+        double sc = (distance+0.5)*(oy/60)+ox;
+        double sb = sec30deg*(cos30deg*targetHeight-oy);
+        double sa = Math.sqrt(Math.pow(sb,2)+Math.pow(sc,2)-2*sb*sc*-0.5);
+        double angle = FastMath.asin((sin60deg*sb)/sa); //IN RADIANS
+        return new double[]{sa,angle};
+
     }
 }
