@@ -44,7 +44,7 @@ public class PerfectPixelPlacement {
     }
     public void executeWithSensor(double targetHeight){
         double distance = input.getDistance(DistanceUnit.MM);
-        double sc = (distance+0.5)*(oy/60)+ox;
+        double sc = distance+0.5*(oy/sin60deg)+ox;
         double sb = sec30deg*(cos30deg*targetHeight-oy);
         double sa = Math.sqrt(Math.pow(sb,2)+Math.pow(sc,2)-2*sb*sc*-0.5);
         double angle = FastMath.asin((sin60deg*sb)/sa); //IN RADIANS
@@ -54,7 +54,7 @@ public class PerfectPixelPlacement {
     }
     public void executeWithSensorSpeededArm(double targetHeight){
         double distance = input.getDistance(DistanceUnit.MM);
-        double sc = (distance+0.5)*(oy/60)+ox;
+        double sc = distance+0.5*(oy/sin60deg)+ox;
         double sb = sec30deg*(cos30deg*targetHeight-oy);
         double sa = Math.sqrt(Math.pow(sb,2)+Math.pow(sc,2)-2*sb*sc*-0.5);
         double angle = FastMath.asin((sin60deg*sb)/sa); //IN RADIANS
@@ -64,7 +64,7 @@ public class PerfectPixelPlacement {
         arm.setLen(sa);
     }
     public void executeWithReading(double targetHeight,double distance){
-        double sc = (distance+0.5)*(oy/60)+ox;
+        double sc = distance+0.5*(oy/sin60deg)+ox;
         double sb = sec30deg*(cos30deg*targetHeight-oy);
         double sa = Math.sqrt(Math.pow(sb,2)+Math.pow(sc,2)-2*sb*sc*-0.5);
         double angle = FastMath.asin((sin60deg*sb)/sa); //IN RADIANS
@@ -73,7 +73,7 @@ public class PerfectPixelPlacement {
         arm.setLen(sa);
     }
     public void executeWithReadingSpeededArm(double targetHeight,double distance){
-        double sc = (distance+0.5)*(oy/60)+ox;
+        double sc = distance+0.5*(oy/sin60deg)+ox;
         double sb = sec30deg*(cos30deg*targetHeight-oy);
         double sa = Math.sqrt(Math.pow(sb,2)+Math.pow(sc,2)-2*sb*sc*-0.5);
         double angle = FastMath.asin((sin60deg*sb)/sa); //IN RADIANS
@@ -83,7 +83,7 @@ public class PerfectPixelPlacement {
         arm.setLen(sa);
     }
     public double[] test(double targetHeight, double distance){
-        double sc = (distance+0.5)*(oy/60)+ox;
+        double sc = distance+0.5*(oy/sin60deg)+ox;
         double sb = sec30deg*(cos30deg*targetHeight-oy);
         double sa = Math.sqrt(Math.pow(sb,2)+Math.pow(sc,2)-2*sb*sc*-0.5);
         double angle = FastMath.asin((sin60deg*sb)/sa); //IN RADIANS
