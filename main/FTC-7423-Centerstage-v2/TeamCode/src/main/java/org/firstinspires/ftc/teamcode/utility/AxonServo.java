@@ -10,6 +10,7 @@ public class AxonServo  {
     AnalogInput feedback;
     double restPos = 0;
     double zeroPosOffset = 0;
+    private final double range = 255;
 
     /**
      * Initialize AxonServo
@@ -47,18 +48,25 @@ public class AxonServo  {
         zeroPosOffset = offset;
     }
     /**
-     * Get the position of the servo between 0 and 1
+     * Get the position of the servo in radians
      * @return position in radians
      */
-    public double getPos(){
-        return feedback.getVoltage()/3.3*Math.toRadians(355);
+    public double getReading(){
+        return feedback.getVoltage()/3.3*Math.toRadians(range);
     }
     /**
      * Get the position of the servo in degrees
      * @return position in radians
      */
-    public double getPosDegrees(){
+    public double getReadingDegrees(){
         return feedback.getVoltage()/3.3*360;
+    }
+    /**
+     * Get the position of the servo between 0 and 1
+     * @return position between 0 and 1
+     */
+    public double getPos() {
+        return motor.getPosition() - restPos;
     }
     /**
      * Get the position of the servo between 0 and 1
@@ -72,14 +80,14 @@ public class AxonServo  {
      * @param pos position in degrees
      */
     public void setPosDegrees(double pos){
-        motor.setPosition(pos/355 + restPos);
+        motor.setPosition(pos/range + restPos);
     }
     /**
      * Set the position of the servo in radians
      * @param pos position in radians
      */
     public void setPosRadians(double pos){
-        motor.setPosition(Math.toDegrees(pos)/355 + restPos);
+        motor.setPosition(Math.toDegrees(pos)/range + restPos);
     }
 
     /**
@@ -88,7 +96,7 @@ public class AxonServo  {
      */
     public void calibrate(){
         //PUT THE SERVO IN THE REST POSITION
-        restPos = getPos();
+        restPos = getReading();
     }
     /**
      * Calibrate the servo
