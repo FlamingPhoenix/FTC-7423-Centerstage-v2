@@ -88,6 +88,5 @@ public class PerfectPixelPlacement {
         double sa = Math.sqrt(Math.pow(sb,2)+Math.pow(sc,2)-2*sb*sc*-0.5);
         double angle = FastMath.asin((sin60deg*sb)/sa); //IN RADIANS
         return new double[]{sa,angle};
-
     }
 }

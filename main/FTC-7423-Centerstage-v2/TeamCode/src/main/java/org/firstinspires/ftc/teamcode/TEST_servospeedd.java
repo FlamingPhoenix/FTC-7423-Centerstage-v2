@@ -18,16 +18,16 @@ public class TEST_servospeedd extends OpMode{
     @Override
     public void loop(){
         if(gamepad1.a){
-            servoSpeedController.setPositionWithWait(0.5, 2);
+            servoSpeedController.setPositionWithSpeed(0.5, 2);
         }
         if(gamepad1.b){
-            servoSpeedController.setPositionWithWait(0.25, 1.5);
+            servoSpeedController.setPositionWithSpeed(0.25, 1.5);
         }
         if(gamepad1.x){
-            servoSpeedController.setPositionWithWait(0.75, 2.5);
+            servoSpeedController.setPositionWithSpeed(0.75, 2.5);
         }
         if(gamepad1.y){
-            servoSpeedController.setPositionWithWait(0, 1);
+            servoSpeedController.setPositionWithSpeed(0, 1);
         }
     }
 }

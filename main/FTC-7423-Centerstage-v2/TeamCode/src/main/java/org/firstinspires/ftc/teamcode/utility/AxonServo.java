@@ -10,7 +10,7 @@ public class AxonServo  {
     AnalogInput feedback;
     double restPos = 0;
     double zeroPosOffset = 0;
-    private final double range = 255;
+    private double range = 255;
 
     /**
      * Initialize AxonServo
@@ -29,11 +29,16 @@ public class AxonServo  {
      * @param motor servo for controlling the servo
      * @param potentiometer analog feedback input
      */
-    public AxonServo(Servo motor, AnalogInput potentiometer){
+    public AxonServo(Servo motor, AnalogInput potentiometer) {
         this.motor = (ServoImplEx) motor;
         this.feedback = potentiometer;
     }
-
+    public void setRange(double range){
+        this.range = range;
+    }
+    public double getRange(){
+        return range;
+    }
     /**
      * Reset the servo to the rest position
      */
@@ -52,7 +57,7 @@ public class AxonServo  {
      * @return position in radians
      */
     public double getReading(){
-        return feedback.getVoltage()/3.3*Math.toRadians(range);
+        return feedback.getVoltage()/3.3*Math.toRadians(360);
     }
     /**
      * Get the position of the servo in degrees

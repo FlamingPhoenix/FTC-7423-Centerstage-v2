@@ -55,10 +55,19 @@ public class LinkageArm {
      * @param len length in the SAME UNIT as bar1len and bar2len
      */
     public void setLen(double len){
-        len = Math.min(len,maxLen);
-        double angle = Math.acos(bar1len*bar1len+len*len-(bar2len-offset)*(bar2len-offset))/(2*bar1len*len);
+        len = Math.min(len+100,maxLen+100);
+        double angle = Math.acos(
+                (
+                    (bar1len*bar1len)
+                    +(len*len)
+                    -(
+                            (bar2len-offset)*(bar2len-offset)
+                    )
+                )
+                        /(2*bar1len*len)
+        );
         //servo range 300 degrees
-        motor.setPosition(Math.toDegrees(angle)/300);
+        motor.setPosition((Math.toDegrees(angle)+160)/180);
     }
     /**
      * Get the length of the linkage arm
