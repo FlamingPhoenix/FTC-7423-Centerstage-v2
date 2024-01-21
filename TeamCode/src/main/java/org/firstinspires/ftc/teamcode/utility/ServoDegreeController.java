@@ -18,6 +18,12 @@ public class ServoDegreeController {
         this.min = min;
         this.max = max;
     }
+    public ServoDegreeController(Servo servo, double range, double zeroPos){
+        this.servo = servo;
+        this.range = range;
+        this.min = zeroPos*range-range/2;
+        this.max = zeroPos*range+range/2;
+    }
     /**
      * Initialize ServoDegreeController
      * @param servo servo for controlling the servo

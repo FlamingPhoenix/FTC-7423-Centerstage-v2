@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.apache.commons.math3.util.FastMath;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.utility.AxonServo;
 import org.firstinspires.ftc.teamcode.utility.LinkageArm;
+import org.firstinspires.ftc.teamcode.utility.ServoDegreeController;
 import org.firstinspires.ftc.teamcode.utility.ServoSpeedController;
 
 public class PerfectPixelPlacement {
@@ -13,6 +15,7 @@ public class PerfectPixelPlacement {
     DistanceSensor input;
     AxonServo armServo;
     ServoSpeedController ssc;
+    ServoDegreeController wrist;
     boolean useDistanceSensorDirect = false;
 
     // CALCUATION CONSTANTS //
@@ -28,7 +31,7 @@ public class PerfectPixelPlacement {
      * @param armServo The servo used to pivot the linkageArm
      * @param input DistanceSensor for reading the distance to the target
      */
-    public PerfectPixelPlacement(LinkageArm arm,AxonServo armServo, DistanceSensor input){
+    public PerfectPixelPlacement(LinkageArm arm,AxonServo armServo,ServoDegreeController wrist, DistanceSensor input){
         this.arm = arm;
         this.input = input;
         this.armServo = armServo;
@@ -41,7 +44,7 @@ public class PerfectPixelPlacement {
      * @param arm LinkageArm for controlling the length of the arm
      * @param armServo The servo used to pivot the linkageArm
      */
-    public PerfectPixelPlacement(LinkageArm arm, AxonServo armServo){
+    public PerfectPixelPlacement(LinkageArm arm, AxonServo armServo, ServoDegreeController wrist){
         this.arm = arm;
         this.armServo = armServo;
         this.useDistanceSensorDirect = false;
@@ -70,7 +73,7 @@ public class PerfectPixelPlacement {
         double sb = sec30deg*(cos30deg*targetHeight- pivotOffsetY);
         double sa = Math.sqrt(Math.pow(sb,2)+Math.pow(sc,2)-2*sb*sc*-0.5);
         double angle = FastMath.asin((sin60deg*sb)/sa); //IN RADIANS
-
+        double wristAngle = 60 - Math.toDegrees(angle);
         ssc.setTargetPos(Math.toDegrees(angle)/255);
         ssc.loopEvery();
         arm.setLen(sa);
@@ -80,7 +83,7 @@ public class PerfectPixelPlacement {
         double sb = sec30deg*(cos30deg*targetHeight- pivotOffsetY);
         double sa = Math.sqrt(Math.pow(sb,2)+Math.pow(sc,2)-2*sb*sc*-0.5);
         double angle = FastMath.asin((sin60deg*sb)/sa); //IN RADIANS
-
+        double wristAngle = 60 - Math.toDegrees(angle);
         armServo.setPosRadians(angle);
         arm.setLen(sa);
     }
@@ -89,7 +92,7 @@ public class PerfectPixelPlacement {
         double sb = sec30deg*(cos30deg*targetHeight- pivotOffsetY);
         double sa = Math.sqrt(Math.pow(sb,2)+Math.pow(sc,2)-2*sb*sc*-0.5);
         double angle = FastMath.asin((sin60deg*sb)/sa); //IN RADIANS
-
+        double wristAngle = 60 - Math.toDegrees(angle);
         ssc.setTargetPos(Math.toDegrees(angle)/255);
         ssc.loopEvery();
         arm.setLen(sa);
@@ -99,6 +102,7 @@ public class PerfectPixelPlacement {
         double sb = sec30deg*(cos30deg*targetHeight- pivotOffsetY);
         double sa = Math.sqrt(Math.pow(sb,2)+Math.pow(sc,2)-2*sb*sc*-0.5);
         double angle = FastMath.asin((sin60deg*sb)/sa); //IN RADIANS
-        return new double[]{sa,angle};
+        double wristAngle = 60 - Math.toDegrees(angle);
+        return new double[]{sa,angle, wristAngle};
     }
 }

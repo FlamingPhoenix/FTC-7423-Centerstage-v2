@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.utility.AxonServo;
 import org.firstinspires.ftc.teamcode.utility.Claw;
 import org.firstinspires.ftc.teamcode.utility.FieldCentricDrive;
 import org.firstinspires.ftc.teamcode.utility.LinkageArm;
+import org.firstinspires.ftc.teamcode.utility.ServoDegreeController;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,6 +23,7 @@ public class TeleOpMain extends OpMode {
     LinkageArm arm;
     PerfectPixelPlacement perfectPixelPlacement;
     DistanceSensor fc;
+    ServoDegreeController wrist;
     boolean debug = true;
     double height = 203;
     int tolerance = 50;
@@ -33,10 +35,11 @@ public class TeleOpMain extends OpMode {
             et = new ElapsedTime();
             fc = hardwareMap.get(DistanceSensor.class, "fc");
             drive = new FieldCentricDrive(hardwareMap);
-            claw = new Claw(hardwareMap.servo.get("claw"), 0, 0, 0, debug);
+            claw = new Claw(hardwareMap.servo.get("claw"), 0, 0, 0, debug);//TODO set positions
             arm = new LinkageArm(hardwareMap.servo.get("linkage"), 175, 236);
             armServo = new AxonServo(hardwareMap.servo.get("armservo"), hardwareMap.analogInput.get("axonin"));
-            perfectPixelPlacement = new PerfectPixelPlacement(arm, armServo, fc);
+            wrist = new ServoDegreeController(hardwareMap.servo.get("wrist"), 300, 0.5);//TODO: set max and min (or zero pos)
+            perfectPixelPlacement = new PerfectPixelPlacement(arm, armServo,wrist, fc);
             perfectPixelPlacement.setOffsets(81.28, 203.2);
             perfectPixelPlacement.setSpeed(1);
         }catch(Exception e){
