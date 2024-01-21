@@ -67,7 +67,7 @@ public class LinkageArm {
                         /(2*bar1len*len)
         );
         //servo range 300 degrees
-        motor.setPosition((160-Math.toDegrees(angle))/180);
+        motor.setPosition((154-Math.toDegrees(angle))/180);
     }
     /**
      * Get the length of the linkage arm
