@@ -65,13 +65,16 @@ public class TeleOpMain extends OpMode {
                 claw.halfOpen();
             }
             double currentTime = et.time(TimeUnit.MILLISECONDS);
-            if (-gamepad2.left_stick_y > 0.1) {
-                if ((currentTime % 50) < 50) {
-                    height += 3;
+            if(et.time(TimeUnit.MILLISECONDS)%50 < tolerance){
+                if (-gamepad2.left_stick_y > 0.1) {
+                        height += 3;
+                } else if (-gamepad2.left_stick_y < -0.1) {
+                        height -= 3;
                 }
-            } else if (-gamepad2.left_stick_y < -0.1) {
-                if ((currentTime % 50) < 50) {
-                    height -= 3;
+                if(-gamepad2.right_stick_y>0.1) {
+                    armServo.setPosition(armServo.getPosition()+0.01);
+                } else if(-gamepad2.right_stick_y<-0.1) {
+                    armServo.setPosition(armServo.getPosition()-0.01);
                 }
             }
             if (gamepad2.left_bumper) {
