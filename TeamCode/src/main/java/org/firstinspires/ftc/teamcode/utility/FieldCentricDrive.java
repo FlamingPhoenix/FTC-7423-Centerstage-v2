@@ -79,7 +79,7 @@ public class FieldCentricDrive {
     public void drive(Gamepad gamepad1){
         double x = gamepad1.left_stick_x*1.1;
         double y = -gamepad1.left_stick_y;
-        double rx = gamepad1.right_stick_x;
+        double rx = -gamepad1.right_stick_x;
         double botHeading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);//might be degrees
         double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
         double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
