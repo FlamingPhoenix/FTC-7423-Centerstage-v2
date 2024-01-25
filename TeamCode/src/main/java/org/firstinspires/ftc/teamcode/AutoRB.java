@@ -16,6 +16,10 @@ import org.firstinspires.ftc.vision.VisionPortal;
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous
 public class AutoRB extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "/sdcard/FIRST/tflitemodels/model.tflite";
+
+    //final double[] xpossB = {-40.96,-34.96,-28.96,-34.96};
+    final double[] xpossR = {28.96,34.96,40.96,34.96};
+    final int[] rotsR = {270,180,90};
     VisionPortal visionPortal;
     @Override
     public void runOpMode() throws InterruptedException {
@@ -28,17 +32,37 @@ public class AutoRB extends LinearOpMode {
         Pose2d startPose = new Pose2d(60, 12, Math.toRadians(180));
         drive.setPoseEstimate(startPose);
         TrajectorySequence go2backdrop = drive.trajectorySequenceBuilder(new Pose2d(60.00, 12.00, Math.toRadians(180.00)))
-                .splineTo(new Vector2d(36.00, 48.00), Math.toRadians(90.00))
+                .splineTo(new Vector2d(xpossR[detection], 48.00), Math.toRadians(90.00))
+                .build();
+        TrajectorySequence go2spike = drive.trajectorySequenceBuilder(go2backdrop.end())
+                .lineToLinearHeading(new Pose2d(36.00, 12.00, Math.toRadians(rotsR[detection])))
+                .build();
+        TrajectorySequence park = drive.trajectorySequenceBuilder(go2spike.end())
+                .lineToSplineHeading(new Pose2d(59.84, 50.64, Math.toRadians(90.00)))
                 .build();
         //GO TO SPIKE MARKS, PLACE PURPLE PIXEL
         //arm.setPosition([floor position])
         //wrist.setPosition([floor angle])
-        TrajectorySequence go2stack = drive.trajectorySequenceBuilder(go2backdrop.end())
-                .lineToConstantHeading(new Vector2d(36.00, -54.00))
-                .build();
+        //TrajectorySequence go2stack = drive.trajectorySequenceBuilder(go2backdrop.end())
+        //        .lineToConstantHeading(new Vector2d(36.00, -54.00))
+        //        .build();
         waitForStart();
         if (isStopRequested()) return;
         drive.followTrajectorySequence(go2backdrop);
+        arm.setPos(0.0000000000);//gET tHiS
+        wrist.setPosition(0.0000000000);//gET tHiS
+        sleep(1000);
+        claw.halfOpen();
+        sleep(500);
+        arm.setPos(0.0000000000);//gET tHiS
+        sleep(500);
+        wrist.setPosition(0.0000000000);//gET tHiS
+        claw.close();
+        drive.followTrajectorySequence(go2spike);
+        sleep(1000);
+        claw.open();
+        sleep(1000);
+        drive.followTrajectorySequence(park);
     }
 
 }
