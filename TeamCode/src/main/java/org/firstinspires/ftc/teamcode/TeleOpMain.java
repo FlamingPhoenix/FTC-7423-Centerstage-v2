@@ -72,9 +72,9 @@ public class TeleOpMain extends OpMode {
                         height -= 3;
                 }
                 if(-gamepad2.right_stick_y>0.1) {
-                    armServo.setPosition(armServo.getPosition()+0.01);
+                    armServo.setPos(armServo.getPos()+0.01);
                 } else if(-gamepad2.right_stick_y<-0.1) {
-                    armServo.setPosition(armServo.getPosition()-0.01);
+                    armServo.setPos(armServo.getPos()-0.01);
                 }
             }
             if (gamepad2.left_bumper) {
