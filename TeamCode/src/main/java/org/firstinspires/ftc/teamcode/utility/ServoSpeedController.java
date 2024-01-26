@@ -23,14 +23,13 @@ public class ServoSpeedController {
     }
     public void setSpeed(double speed){
         this.speed = speed;
+        this.delta = speed / 1000;
+        this.loops = error / delta;
     }
     public void setTargetPos(double pos){
         this.targetPos = pos;
-    }
-    public void initvalues(){
-        delta = speed / 1000;
-        error = servo.getPosition() - targetPos;
-        loops = error / delta;
+        this.error = servo.getPosition() - targetPos;
+        this.loops = error / delta;
     }
     public void setPositionWithSpeed(double pos,double speed){
         if(!isAxon) {
