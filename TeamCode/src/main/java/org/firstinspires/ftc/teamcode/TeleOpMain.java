@@ -91,7 +91,11 @@ public class TeleOpMain extends OpMode {
             telemetry.update();
         }catch(Exception e) {
             if (throwErrors) {
-                throw e;
+                try {
+                    throw e;
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
             } else {
                 telemetry.addData("ERROR", e.getMessage());
                 telemetry.update();

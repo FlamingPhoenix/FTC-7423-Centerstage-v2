@@ -5,8 +5,8 @@ import static java.lang.Math.abs;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class ServoSpeedController {
-    Servo servo;
-    AxonServo axonServo;
+    public Servo servo;
+    public AxonServo axonServo;
     boolean isAxon = false;
     public double speed = 1;
     public double targetPos = 0;
