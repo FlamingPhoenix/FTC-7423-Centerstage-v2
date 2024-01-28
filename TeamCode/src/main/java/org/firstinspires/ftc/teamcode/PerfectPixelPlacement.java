@@ -111,8 +111,10 @@ public class PerfectPixelPlacement {
     }
     public void executeForAuto(double distance, double targetHeight){
         double sc = distance+0.5*(pivotOffsetY /sin60deg)+ pivotOffsetX;
-        //defaultArmLen = side b
-        //sin(c)/sc = sin120deg/defaultArmLen
+        double ac= FastMath.asin((sin120deg/defaultArmlen)*sc);
+        double aa=180-120-ac;
+
+        armServo.setPosRadians(aa);
     }
     public double[] test(double targetHeight, double distance){
         double sc = distance+0.5*(pivotOffsetY / sin60deg)+ pivotOffsetX;
