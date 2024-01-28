@@ -56,6 +56,12 @@ public class TeleOpMain extends OpMode {
     @Override
     public void loop() {
         try {
+            if (gamepad2.left_bumper) {
+                speedMultiplier = 0.2;
+            } else {
+                speedMultiplier = 1;
+            }
+            double currentTime = et.time(TimeUnit.MILLISECONDS);
             // CLAW LOGIC  // CLAW LOGIC  // CLAW LOGIC  // CLAW LOGIC  //
             if (gamepad2.x) {
                 claw.open();
@@ -64,7 +70,7 @@ public class TeleOpMain extends OpMode {
             } else if (gamepad2.b) {
                 claw.halfOpen();
             }
-            double currentTime = et.time(TimeUnit.MILLISECONDS);
+            // ARM LOGIC  // ARM LOGIC  // ARM LOGIC  // ARM LOGIC  //
             if (-gamepad2.left_stick_y > 0.1) {
                 height += -gamepad2.left_stick_y*3*speedMultiplier;
             } else if (-gamepad2.left_stick_y < -0.1) {
@@ -73,21 +79,11 @@ public class TeleOpMain extends OpMode {
             if(-gamepad2.right_stick_y>0.1) {
                 armServo.setPos(armServo.getPos()+0.01*speedMultiplier);
             } else if(-gamepad2.right_stick_y<-0.1) {
-                armServo.setPos(armServo.getPos() - 0.01*speedMultiplier);
+                armServo.setPos(armServo.getPos()-0.01*speedMultiplier);
             }
-            if (gamepad2.left_bumper) {
-                speedMultiplier = 0.2;
-            } else {
-                speedMultiplier = 1;
-            }
-            // ARM LOGIC  // ARM LOGIC  // ARM LOGIC  // ARM LOGIC  //
-            if (gamepad2.right_trigger > 0.1) {
-                perfectPixelPlacement.executeWithSensorSpeededArm(height);
-            }
+            perfectPixelPlacement.executeWithSensorSpeededArm(height);
             // DRIVE //
             drive.drive(gamepad1);
-
-
             //TELEMETRY //
             telemetry.addData("height", height);
             telemetry.addData("distance", fc.getDistance(DistanceUnit.MM));
