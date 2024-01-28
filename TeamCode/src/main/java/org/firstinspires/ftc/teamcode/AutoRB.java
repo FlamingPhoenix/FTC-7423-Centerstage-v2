@@ -20,6 +20,11 @@ public class AutoRB extends LinearOpMode {
     //final double[] xpossB = {-40.96,-34.96,-28.96,-34.96};
     final double[] xpossR = {28.96,34.96,40.96,34.96};
     final int[] rotsR = {270,180,90};
+
+    final double armBackdrop = 0.0000000000;//TODO: GET THESE VALUES!!!!!!!
+    final double wristBackdrop = 0.0000000000;
+    final double armFloor = 0.0000000000;
+    final double wristFloor = 0.0000000000;
     VisionPortal visionPortal;
     @Override
     public void runOpMode() throws InterruptedException {
@@ -31,8 +36,10 @@ public class AutoRB extends LinearOpMode {
         int detection = TFOD.getPos();
         Pose2d startPose = new Pose2d(60, 12, Math.toRadians(180));
         drive.setPoseEstimate(startPose);
+
+        //PerfectPixelPlacement ppp = new PerfectPixelPlacement()
         TrajectorySequence go2backdrop = drive.trajectorySequenceBuilder(new Pose2d(60.00, 12.00, Math.toRadians(180.00)))
-                .splineTo(new Vector2d(xpossR[detection], 48.00), Math.toRadians(90.00))
+                .splineTo(new Vector2d(xpossR[detection], 48.00), Math.toRadians(90.00))//TODO: PERFECT y
                 .build();
         TrajectorySequence go2spike = drive.trajectorySequenceBuilder(go2backdrop.end())
                 .lineToLinearHeading(new Pose2d(36.00, 12.00, Math.toRadians(rotsR[detection])))
@@ -49,19 +56,30 @@ public class AutoRB extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
         drive.followTrajectorySequence(go2backdrop);
-        arm.setPos(0.0000000000);//gET tHiS
-        wrist.setPosition(0.0000000000);//gET tHiS
-        sleep(1000);
+        arm.setPos(armBackdrop);
+        wrist.setPosition(wristBackdrop);
+
+        sleep(2000);
+
         claw.halfOpen();
+
         sleep(500);
-        arm.setPos(0.0000000000);//gET tHiS
-        sleep(500);
-        wrist.setPosition(0.0000000000);//gET tHiS
+
+
         claw.close();
+        arm.setPos(armFloor);
+        wrist.setPosition(wristFloor);
+
+        sleep(500);
+
         drive.followTrajectorySequence(go2spike);
+
         sleep(1000);
+
         claw.open();
+
         sleep(1000);
+
         drive.followTrajectorySequence(park);
     }
 

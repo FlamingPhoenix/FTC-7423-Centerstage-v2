@@ -17,9 +17,11 @@ public class PerfectPixelPlacement {
     ServoSpeedController ssc;
     ServoDegreeController wrist;
     boolean useDistanceSensorDirect = false;
+    double defaultArmlen;
 
     // CALCUATION CONSTANTS //
     private final double sin60deg = Math.sin(Math.toRadians(60));
+    private final double sin120deg = Math.sin(Math.toRadians(120));
     private final double sec30deg = 1/Math.cos(Math.toRadians(30));
     private final double cos30deg = Math.cos(Math.toRadians(30));
     double pivotOffsetX = 0;
@@ -50,6 +52,12 @@ public class PerfectPixelPlacement {
         this.useDistanceSensorDirect = false;
         ssc = new ServoSpeedController(armServo);
     }
+    public PerfectPixelPlacement(double defaultArmlen, AxonServo armServo, ServoDegreeController wrist){
+        this.defaultArmlen = defaultArmlen;
+        this.armServo = armServo;
+        this.useDistanceSensorDirect = false;
+        ssc = new ServoSpeedController(armServo);
+    }
     public void setOffsets(double ox, double oy){
         this.pivotOffsetX = ox;//8x3.2 in //81.28
         this.pivotOffsetY = oy;//203.2
@@ -57,26 +65,30 @@ public class PerfectPixelPlacement {
     public void setSpeed(double speed){
         ssc.setSpeed(speed);
     }
-    public void executeWithSensor(double targetHeight){
+    public void executeWithSensor(double targetHeight) throws InterruptedException {
         double distance = input.getDistance(DistanceUnit.MM);
         double sc = distance+0.5*(pivotOffsetY / sin60deg)+ pivotOffsetX;
         double sb = sec30deg*(cos30deg*targetHeight - pivotOffsetY);
         double sa = Math.sqrt(Math.pow(sb,2)+Math.pow(sc,2)-2*sb*sc*-0.5);
         double angle = FastMath.asin((sin60deg*sb)/sa); //IN RADIANS
 
+
+        arm.setLen(sa-172);
+        Thread.sleep(20);
         armServo.setPosRadians(angle);
-        arm.setLen(sa);
     }
-    public void executeWithSensorSpeededArm(double targetHeight){
+    public void executeWithSensorSpeededArm(double targetHeight) throws InterruptedException {
         double distance = input.getDistance(DistanceUnit.MM);
         double sc = distance+0.5*(pivotOffsetY /sin60deg)+ pivotOffsetX;
         double sb = sec30deg*(cos30deg*targetHeight- pivotOffsetY);
         double sa = Math.sqrt(Math.pow(sb,2)+Math.pow(sc,2)-2*sb*sc*-0.5);
         double angle = FastMath.asin((sin60deg*sb)/sa); //IN RADIANS
         double wristAngle = 60 - Math.toDegrees(angle);
+
+        arm.setLen(sa-172);
+        Thread.sleep(20);
         ssc.setTargetPos(Math.toDegrees(angle)/255);
         ssc.loopEvery();
-        arm.setLen(sa);
     }
     public void executeWithReading(double targetHeight,double distance){
         double sc = distance+0.5*(pivotOffsetY / sin60deg)+ pivotOffsetX;
@@ -85,7 +97,7 @@ public class PerfectPixelPlacement {
         double angle = FastMath.asin((sin60deg*sb)/sa); //IN RADIANS
         double wristAngle = 60 - Math.toDegrees(angle);
         armServo.setPosRadians(angle);
-        arm.setLen(sa);
+        arm.setLen(sa-172);
     }
     public void executeWithReadingSpeededArm(double targetHeight,double distance){
         double sc = distance+0.5*(pivotOffsetY / sin60deg)+ pivotOffsetX;
@@ -95,7 +107,12 @@ public class PerfectPixelPlacement {
         double wristAngle = 60 - Math.toDegrees(angle);
         ssc.setTargetPos(Math.toDegrees(angle)/255);
         ssc.loopEvery();
-        arm.setLen(sa);
+        arm.setLen(sa-172);
+    }
+    public void executeForAuto(double distance, double targetHeight){
+        double sc = distance+0.5*(pivotOffsetY /sin60deg)+ pivotOffsetX;
+        //defaultArmLen = side b
+        //sin(c)/sc = sin120deg/defaultArmLen
     }
     public double[] test(double targetHeight, double distance){
         double sc = distance+0.5*(pivotOffsetY / sin60deg)+ pivotOffsetX;
