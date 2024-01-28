@@ -79,7 +79,7 @@ public class PerfectPixelPlacement {
         arm.setLen(sa);
     }
     public void executeWithReading(double targetHeight,double distance){
-        double sc = distance+0.5*(pivotOffsetY /sin60deg)+ pivotOffsetX;
+        double sc = distance+0.5*(pivotOffsetY / sin60deg)+ pivotOffsetX;
         double sb = sec30deg*(cos30deg*targetHeight- pivotOffsetY);
         double sa = Math.sqrt(Math.pow(sb,2)+Math.pow(sc,2)-2*sb*sc*-0.5);
         double angle = FastMath.asin((sin60deg*sb)/sa); //IN RADIANS
@@ -88,7 +88,7 @@ public class PerfectPixelPlacement {
         arm.setLen(sa);
     }
     public void executeWithReadingSpeededArm(double targetHeight,double distance){
-        double sc = distance+0.5*(pivotOffsetY /sin60deg)+ pivotOffsetX;
+        double sc = distance+0.5*(pivotOffsetY / sin60deg)+ pivotOffsetX;
         double sb = sec30deg*(cos30deg*targetHeight- pivotOffsetY);
         double sa = Math.sqrt(Math.pow(sb,2)+Math.pow(sc,2)-2*sb*sc*-0.5);
         double angle = FastMath.asin((sin60deg*sb)/sa); //IN RADIANS
@@ -98,7 +98,7 @@ public class PerfectPixelPlacement {
         arm.setLen(sa);
     }
     public double[] test(double targetHeight, double distance){
-        double sc = distance+0.5*(pivotOffsetY /sin60deg)+ pivotOffsetX;
+        double sc = distance+0.5*(pivotOffsetY / sin60deg)+ pivotOffsetX;
         double sb = sec30deg*(cos30deg*targetHeight- pivotOffsetY);
         double sa = Math.sqrt(Math.pow(sb,2)+Math.pow(sc,2)-2*sb*sc*-0.5);
         double angle = FastMath.asin((sin60deg*sb)/sa); //IN RADIANS

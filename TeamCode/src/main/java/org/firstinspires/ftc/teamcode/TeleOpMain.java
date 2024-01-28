@@ -26,7 +26,7 @@ public class TeleOpMain extends OpMode {
     ServoDegreeController wrist;
     boolean debug = true;
     double height = 203;
-    int tolerance = 50;
+    double speedMultiplier = 1;
 
     boolean throwErrors = true;
     @Override
@@ -65,22 +65,20 @@ public class TeleOpMain extends OpMode {
                 claw.halfOpen();
             }
             double currentTime = et.time(TimeUnit.MILLISECONDS);
-            if(et.time(TimeUnit.MILLISECONDS)%50 < tolerance){
-                if (-gamepad2.left_stick_y > 0.1) {
-                        height += 3;
-                } else if (-gamepad2.left_stick_y < -0.1) {
-                        height -= 3;
-                }
-                if(-gamepad2.right_stick_y>0.1) {
-                    armServo.setPos(armServo.getPos()+0.01);
-                } else if(-gamepad2.right_stick_y<-0.1) {
-                    armServo.setPos(armServo.getPos()-0.01);
-                }
+            if (-gamepad2.left_stick_y > 0.1) {
+                height += -gamepad2.left_stick_y*3*speedMultiplier;
+            } else if (-gamepad2.left_stick_y < -0.1) {
+                height += -gamepad2.left_stick_y*3*speedMultiplier;
+            }
+            if(-gamepad2.right_stick_y>0.1) {
+                armServo.setPos(armServo.getPos()+0.01*speedMultiplier);
+            } else if(-gamepad2.right_stick_y<-0.1) {
+                armServo.setPos(armServo.getPos() - 0.01*speedMultiplier);
             }
             if (gamepad2.left_bumper) {
-                tolerance = 10;
+                speedMultiplier = 0.2;
             } else {
-                tolerance = 50;
+                speedMultiplier = 1;
             }
             // ARM LOGIC  // ARM LOGIC  // ARM LOGIC  // ARM LOGIC  //
             if (gamepad2.right_trigger > 0.1) {
