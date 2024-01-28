@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.utility.AxonServo;
@@ -32,12 +34,13 @@ public class AutoRB extends LinearOpMode {
         AxonServo arm = new AxonServo(hardwareMap.servo.get("armservo"), hardwareMap.analogInput.get("axonin"));
         ServoDegreeController wrist = new ServoDegreeController(hardwareMap.servo.get("wrist"), 300, 0.5); // SET ZERO POSITION
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        DistanceSensor fc = hardwareMap.get(DistanceSensor.class, "fc");
         TFOD.initTfod(hardwareMap.get(WebcamName.class,"Webcam 1"),visionPortal, TFOD_MODEL_ASSET);
         int detection = TFOD.getPos();
         Pose2d startPose = new Pose2d(60, 12, Math.toRadians(180));
         drive.setPoseEstimate(startPose);
 
-        //PerfectPixelPlacement ppp = new PerfectPixelPlacement()
+        PerfectPixelPlacement ppp = new PerfectPixelPlacement(172,arm,wrist);
         TrajectorySequence go2backdrop = drive.trajectorySequenceBuilder(new Pose2d(60.00, 12.00, Math.toRadians(180.00)))
                 .splineTo(new Vector2d(xpossR[detection], 48.00), Math.toRadians(90.00))//TODO: PERFECT y
                 .build();
@@ -56,9 +59,10 @@ public class AutoRB extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
         drive.followTrajectorySequence(go2backdrop);
-        arm.setPos(armBackdrop);
-        wrist.setPosition(wristBackdrop);
-
+        //arm.setPos(armBackdrop);
+        //wrist.setPosition(wristBackdrop);
+        double distance = fc.getDistance(DistanceUnit.MM);
+        ppp.executeForAuto(distance,300);
         sleep(2000);
 
         claw.halfOpen();
