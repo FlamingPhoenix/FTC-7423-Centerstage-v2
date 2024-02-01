@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.apache.commons.math3.util.FastMath;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -12,7 +11,7 @@ import org.firstinspires.ftc.teamcode.utility.ServoSpeedController;
 
 public class PerfectPixelPlacement {
     LinkageArm arm;
-    DistanceSensor input;
+    DistanceSensor inputDistanceSensor;
     AxonServo armServo;
     ServoSpeedController ssc;
     ServoDegreeController wrist;
@@ -31,11 +30,11 @@ public class PerfectPixelPlacement {
      * Initialize PerfectPixelPlacement
      * @param arm LinkageArm for controlling the length of the arm
      * @param armServo The servo used to pivot the linkageArm
-     * @param input DistanceSensor for reading the distance to the target
+     * @param inputDistanceSensor DistanceSensor for reading the distance to the target
      */
-    public PerfectPixelPlacement(LinkageArm arm,AxonServo armServo,ServoDegreeController wrist, DistanceSensor input){
+    public PerfectPixelPlacement(LinkageArm arm,AxonServo armServo,ServoDegreeController wrist, DistanceSensor inputDistanceSensor){
         this.arm = arm;
-        this.input = input;
+        this.inputDistanceSensor = inputDistanceSensor;
         this.armServo = armServo;
         this.useDistanceSensorDirect = true;
         ssc = new ServoSpeedController(armServo);
@@ -66,7 +65,7 @@ public class PerfectPixelPlacement {
         ssc.setSpeed(speed);
     }
     public void executeWithSensor(double targetHeight) throws InterruptedException {
-        double distance = input.getDistance(DistanceUnit.MM);
+        double distance = inputDistanceSensor.getDistance(DistanceUnit.MM);
         double sc = distance+0.5*(pivotOffsetY / sin60deg)+ pivotOffsetX;
         double sb = sec30deg*(cos30deg*targetHeight - pivotOffsetY);
         double sa = Math.sqrt(Math.pow(sb,2)+Math.pow(sc,2)-2*sb*sc*-0.5);
@@ -78,7 +77,7 @@ public class PerfectPixelPlacement {
         armServo.setPosRadians(angle);
     }
     public void executeWithSensorSpeededArm(double targetHeight) throws InterruptedException {
-        double distance = input.getDistance(DistanceUnit.MM);
+        double distance = inputDistanceSensor.getDistance(DistanceUnit.MM);
         double sc = distance+0.5*(pivotOffsetY /sin60deg)+ pivotOffsetX;
         double sb = sec30deg*(cos30deg*targetHeight- pivotOffsetY);
         double sa = Math.sqrt(Math.pow(sb,2)+Math.pow(sc,2)-2*sb*sc*-0.5);

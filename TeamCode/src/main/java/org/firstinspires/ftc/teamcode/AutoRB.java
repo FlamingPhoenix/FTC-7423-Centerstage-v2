@@ -34,7 +34,7 @@ public class AutoRB extends LinearOpMode {
         AxonServo arm = new AxonServo(hardwareMap.servo.get("armservo"), hardwareMap.analogInput.get("axonin"));
         ServoDegreeController wrist = new ServoDegreeController(hardwareMap.servo.get("wrist"), 300, 0.5); // SET ZERO POSITION
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        DistanceSensor fc = hardwareMap.get(DistanceSensor.class, "fc");
+        DistanceSensor fcDistanceSensor = hardwareMap.get(DistanceSensor.class, "fc");
         TFOD.initTfod(hardwareMap.get(WebcamName.class,"Webcam 1"),visionPortal, TFOD_MODEL_ASSET);
         int detection = TFOD.getPos();
         Pose2d startPose = new Pose2d(60, 12, Math.toRadians(180));
@@ -61,7 +61,7 @@ public class AutoRB extends LinearOpMode {
         drive.followTrajectorySequence(go2backdrop);
         //arm.setPos(armBackdrop);
         //wrist.setPosition(wristBackdrop);
-        double distance = fc.getDistance(DistanceUnit.MM);
+        double distance = fcDistanceSensor.getDistance(DistanceUnit.MM);
         ppp.executeForAuto(distance,300);
         sleep(2000);
 
