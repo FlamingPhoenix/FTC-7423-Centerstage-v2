@@ -55,6 +55,7 @@ public class AxonServo  {
      * Get the position of the servo in radians
      * @return position in radians
      */
+    public double getRestPos() {return restPos;}
     public double getReading(){
         return feedback.getVoltage()/3.3*Math.toRadians(360);
     }
