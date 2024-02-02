@@ -16,13 +16,13 @@ import java.util.concurrent.TimeUnit;
 
 @TeleOp
 public class TeleOpMain extends OpMode {
-    ElapsedTime et;
+    ElapsedTime timer;
     FieldCentricDrive drive;
     Claw claw;
     AxonServo armServo;
     LinkageArm arm;
     PerfectPixelPlacement perfectPixelPlacement;
-    DistanceSensor fcDistanceSensor;
+    DistanceSensor frontDistanceSensor;
     ServoDegreeController wrist;
     boolean debug = true;
     double height = 203;
@@ -32,14 +32,14 @@ public class TeleOpMain extends OpMode {
     @Override
     public void init() {
         try {
-            et = new ElapsedTime();
-            fcDistanceSensor = hardwareMap.get(DistanceSensor.class, "fc");
+            timer = new ElapsedTime();
+            frontDistanceSensor = hardwareMap.get(DistanceSensor.class, "fc");
             drive = new FieldCentricDrive(hardwareMap);
-            claw = new Claw(hardwareMap.servo.get("claw"), 0, 0, 0, 0, debug);//TODO set positions
+            claw = new Claw(hardwareMap.servo.get("claw"), 0, 0, 0, debug);//TODO set positions
             arm = new LinkageArm(hardwareMap.servo.get("linkage"), 175, 236);
             armServo = new AxonServo(hardwareMap.servo.get("armservo"), hardwareMap.analogInput.get("axonin"));
-            wrist = new ServoDegreeController(hardwareMap.servo.get("wrist"), 300, 0, 0.5);//TODO: set max and min (or zero pos)
-            perfectPixelPlacement = new PerfectPixelPlacement(arm, armServo,wrist, fcDistanceSensor);
+            wrist = new ServoDegreeController(hardwareMap.servo.get("wrist"), 300, 0.5);//TODO: set max and min (or zero pos)
+            perfectPixelPlacement = new PerfectPixelPlacement(arm, armServo,wrist, frontDistanceSensor);
             perfectPixelPlacement.setOffsets(81.28, 203.2);
             perfectPixelPlacement.setSpeed(1);
         }catch(Exception e){
@@ -61,7 +61,7 @@ public class TeleOpMain extends OpMode {
             } else {
                 speedMultiplier = 1;
             }
-            double currentTime = et.time(TimeUnit.MILLISECONDS);
+            double currentTime = timer.time(TimeUnit.MILLISECONDS);
             // CLAW LOGIC  // CLAW LOGIC  // CLAW LOGIC  // CLAW LOGIC  //
             if (gamepad2.x) {
                 claw.open();
@@ -76,17 +76,28 @@ public class TeleOpMain extends OpMode {
             } else if (-gamepad2.left_stick_y < -0.1) {
                 height += -gamepad2.left_stick_y*3*speedMultiplier;
             }
+            // 300 low, 600 mid 800 high
             if(-gamepad2.right_stick_y>0.1) {
-                armServo.setPos(armServo.getPos()+0.01*speedMultiplier);
+                armServo.setPos(armServo.getPos()+0.01*speedMultiplier*Math.abs(-gamepad2.right_stick_y));
             } else if(-gamepad2.right_stick_y<-0.1) {
-                armServo.setPos(armServo.getPos()-0.01*speedMultiplier);
+                armServo.setPos(armServo.getPos()-0.01*speedMultiplier*Math.abs(-gamepad2.right_stick_y));
             }
-            perfectPixelPlacement.executeWithSensorSpeededArm(height);
+
+            //luke is working on this right now
+            //please don't touch before // DRIVE //
+            if(gamepad1.left_trigger>0.1) {
+                perfectPixelPlacement.executeWithSensorSpeededArm(height);
+            }
+            if(gamepad2.right_bumper) {
+                arm.setLen(500);
+            }else{
+                arm.setLen(0);
+            }
             // DRIVE //
             drive.drive(gamepad1);
             //TELEMETRY //
             telemetry.addData("height", height);
-            telemetry.addData("distance", fcDistanceSensor.getDistance(DistanceUnit.MM));
+            telemetry.addData("distance", frontDistanceSensor.getDistance(DistanceUnit.MM));
             telemetry.addData("time", currentTime);
             telemetry.update();
         }catch(Exception e) {

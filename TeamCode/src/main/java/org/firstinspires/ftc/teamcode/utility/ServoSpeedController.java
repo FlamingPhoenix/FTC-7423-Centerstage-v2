@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.utility;
 
-import static java.lang.Math.abs;
-
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class ServoSpeedController {
