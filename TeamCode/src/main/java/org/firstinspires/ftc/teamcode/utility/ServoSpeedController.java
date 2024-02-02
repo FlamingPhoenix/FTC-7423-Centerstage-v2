@@ -5,8 +5,8 @@ import static java.lang.Math.abs;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class ServoSpeedController {
-    Servo servo;
-    AxonServo axonServo;
+    public Servo servo;
+    public AxonServo axonServo;
     boolean isAxon = false;
     public double speed = 1;
     public double targetPos = 0;
@@ -23,14 +23,13 @@ public class ServoSpeedController {
     }
     public void setSpeed(double speed){
         this.speed = speed;
+        this.delta = speed / 1000;
+        this.loops = error / delta;
     }
     public void setTargetPos(double pos){
         this.targetPos = pos;
-    }
-    public void initvalues(){
-        delta = speed / 1000;
-        error = servo.getPosition() - targetPos;
-        loops = error / delta;
+        this.error = servo.getPosition() - targetPos;
+        this.loops = error / delta;
     }
     public void setPositionWithSpeed(double pos,double speed){
         if(!isAxon) {

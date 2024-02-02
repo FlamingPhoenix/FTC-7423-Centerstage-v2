@@ -40,14 +40,13 @@ public class AxonServo  {
         return range;
     }
     /**
-     * Reset the servo to the rest position
+     * Reset the servo to the restPos
      */
     public void reset(){
-        motor.setPosition(0);
+        motor.setPosition(restPos);
     }
     /**
-     * set where the zero position is
-     * @return position in radians
+     * set the zeroPos - the servo position at which the arm is parallel to the ground
      */
     public void setZeroPosOffset(double offset){
         zeroPosOffset = offset;
@@ -56,12 +55,13 @@ public class AxonServo  {
      * Get the position of the servo in radians
      * @return position in radians
      */
+    public double getRestPos() {return restPos;}
     public double getReading(){
         return feedback.getVoltage()/3.3*Math.toRadians(360);
     }
     /**
      * Get the position of the servo in degrees
-     * @return position in radians
+     * @return position in degrees
      */
     public double getReadingDegrees(){
         return feedback.getVoltage()/3.3*360;
@@ -71,28 +71,28 @@ public class AxonServo  {
      * @return position between 0 and 1
      */
     public double getPos() {
-        return motor.getPosition() - restPos;
+        return motor.getPosition();
     }
     /**
-     * Get the position of the servo between 0 and 1
-     * @return position in radians
+     * Set the position of the servo between 0 and 1
+     * @param pos position between 0 and 1
      */
     public void setPos(double pos){
-        motor.setPosition(pos+restPos);
+        motor.setPosition(pos);
     }
     /**
-     * Set the position of the servo in degrees
+     * Set the position of the servo in degrees with respect to the ground
      * @param pos position in degrees
      */
     public void setPosDegrees(double pos){
-        motor.setPosition(pos/range + restPos);
+        motor.setPosition(pos/range + zeroPosOffset);
     }
     /**
-     * Set the position of the servo in radians
+     * Set the position of the servo in radians with respect to the ground
      * @param pos position in radians
      */
     public void setPosRadians(double pos){
-        motor.setPosition(Math.toDegrees(pos)/range + restPos);
+        motor.setPosition(Math.toDegrees(pos)/range + zeroPosOffset);
     }
 
     /**

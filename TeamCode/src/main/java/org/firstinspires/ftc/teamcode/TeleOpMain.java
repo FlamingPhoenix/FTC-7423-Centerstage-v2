@@ -22,24 +22,24 @@ public class TeleOpMain extends OpMode {
     AxonServo armServo;
     LinkageArm arm;
     PerfectPixelPlacement perfectPixelPlacement;
-    DistanceSensor fc;
+    DistanceSensor fcDistanceSensor;
     ServoDegreeController wrist;
     boolean debug = true;
     double height = 203;
-    int tolerance = 50;
+    double speedMultiplier = 1;
 
     boolean throwErrors = true;
     @Override
     public void init() {
         try {
             et = new ElapsedTime();
-            fc = hardwareMap.get(DistanceSensor.class, "fc");
+            fcDistanceSensor = hardwareMap.get(DistanceSensor.class, "fc");
             drive = new FieldCentricDrive(hardwareMap);
-            claw = new Claw(hardwareMap.servo.get("claw"), 0, 0, 0, debug);//TODO set positions
+            claw = new Claw(hardwareMap.servo.get("claw"), 0, 0, 0, 0, debug);//TODO set positions
             arm = new LinkageArm(hardwareMap.servo.get("linkage"), 175, 236);
             armServo = new AxonServo(hardwareMap.servo.get("armservo"), hardwareMap.analogInput.get("axonin"));
-            wrist = new ServoDegreeController(hardwareMap.servo.get("wrist"), 300, 0.5);//TODO: set max and min (or zero pos)
-            perfectPixelPlacement = new PerfectPixelPlacement(arm, armServo,wrist, fc);
+            wrist = new ServoDegreeController(hardwareMap.servo.get("wrist"), 300, 0, 0.5);//TODO: set max and min (or zero pos)
+            perfectPixelPlacement = new PerfectPixelPlacement(arm, armServo,wrist, fcDistanceSensor);
             perfectPixelPlacement.setOffsets(81.28, 203.2);
             perfectPixelPlacement.setSpeed(1);
         }catch(Exception e){
@@ -56,6 +56,12 @@ public class TeleOpMain extends OpMode {
     @Override
     public void loop() {
         try {
+            if (gamepad2.left_bumper) {
+                speedMultiplier = 0.2;
+            } else {
+                speedMultiplier = 1;
+            }
+            double currentTime = et.time(TimeUnit.MILLISECONDS);
             // CLAW LOGIC  // CLAW LOGIC  // CLAW LOGIC  // CLAW LOGIC  //
             if (gamepad2.x) {
                 claw.open();
@@ -64,40 +70,28 @@ public class TeleOpMain extends OpMode {
             } else if (gamepad2.b) {
                 claw.halfOpen();
             }
-            double currentTime = et.time(TimeUnit.MILLISECONDS);
-            if(et.time(TimeUnit.MILLISECONDS)%50 < tolerance){
-                if (-gamepad2.left_stick_y > 0.1) {
-                        height += 3;
-                } else if (-gamepad2.left_stick_y < -0.1) {
-                        height -= 3;
-                }
-                if(-gamepad2.right_stick_y>0.1) {
-                    armServo.setPos(armServo.getPos()+0.01);
-                } else if(-gamepad2.right_stick_y<-0.1) {
-                    armServo.setPos(armServo.getPos()-0.01);
-                }
-            }
-            if (gamepad2.left_bumper) {
-                tolerance = 10;
-            } else {
-                tolerance = 50;
-            }
             // ARM LOGIC  // ARM LOGIC  // ARM LOGIC  // ARM LOGIC  //
-            if (gamepad2.right_trigger > 0.1) {
-                perfectPixelPlacement.executeWithSensorSpeededArm(height);
+            if (-gamepad2.left_stick_y > 0.1) {
+                height += -gamepad2.left_stick_y*3*speedMultiplier;
+            } else if (-gamepad2.left_stick_y < -0.1) {
+                height += -gamepad2.left_stick_y*3*speedMultiplier;
             }
+            if(-gamepad2.right_stick_y>0.1) {
+                armServo.setPos(armServo.getPos()+0.01*speedMultiplier);
+            } else if(-gamepad2.right_stick_y<-0.1) {
+                armServo.setPos(armServo.getPos()-0.01*speedMultiplier);
+            }
+            perfectPixelPlacement.executeWithSensorSpeededArm(height);
             // DRIVE //
             drive.drive(gamepad1);
-
-
             //TELEMETRY //
             telemetry.addData("height", height);
-            telemetry.addData("distance", fc.getDistance(DistanceUnit.MM));
+            telemetry.addData("distance", fcDistanceSensor.getDistance(DistanceUnit.MM));
             telemetry.addData("time", currentTime);
             telemetry.update();
         }catch(Exception e) {
             if (throwErrors) {
-                throw e;
+                throw new RuntimeException(e);
             } else {
                 telemetry.addData("ERROR", e.getMessage());
                 telemetry.update();
