@@ -31,14 +31,14 @@ public class AutoRB extends LinearOpMode {
     VisionPortal visionPortal;
     @Override
     public void runOpMode() throws InterruptedException {
-        Claw claw = new Claw(hardwareMap.servo.get("claw"),0,0,0,true);
+        Claw claw = new Claw(hardwareMap.servo.get("claw"),0,0,0, 0,true);
         AxonServo arm = new AxonServo(hardwareMap.servo.get("armservo"), hardwareMap.analogInput.get("axonin"));
         LinkageArm linkage = new LinkageArm(hardwareMap.servo.get("linkage"), 175, 236);
-        ServoDegreeController wrist = new ServoDegreeController(hardwareMap.servo.get("wrist"), 300, 0.5); // SET ZERO POSITION
+        ServoDegreeController wrist = new ServoDegreeController(hardwareMap.servo.get("wrist"), 300, 0.5, 0); // SET ZERO POSITION
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         DistanceSensor fcDistanceSensor = hardwareMap.get(DistanceSensor.class, "fc");
         TFOD.initTfod(hardwareMap.get(WebcamName.class,"Webcam 1"),visionPortal, TFOD_MODEL_ASSET);
-        PerfectPixelPlacement ppp = new PerfectPixelPlacement(linkage,arm,wrist,fc);
+        PerfectPixelPlacement ppp = new PerfectPixelPlacement(linkage,arm,wrist,fcDistanceSensor);
         int detection = TFOD.getPos();
         Pose2d startPose = new Pose2d(60, 12, Math.toRadians(180));
         drive.setPoseEstimate(startPose);
