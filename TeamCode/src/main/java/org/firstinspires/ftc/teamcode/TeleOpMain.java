@@ -35,10 +35,10 @@ public class TeleOpMain extends OpMode {
             et = new ElapsedTime();
             fcDistanceSensor = hardwareMap.get(DistanceSensor.class, "fc");
             drive = new FieldCentricDrive(hardwareMap);
-            claw = new Claw(hardwareMap.servo.get("claw"), 0, 0, 0, debug);//TODO set positions
+            claw = new Claw(hardwareMap.servo.get("claw"), 0, 0, 0, 0, debug);//TODO set positions
             arm = new LinkageArm(hardwareMap.servo.get("linkage"), 175, 236);
             armServo = new AxonServo(hardwareMap.servo.get("armservo"), hardwareMap.analogInput.get("axonin"));
-            wrist = new ServoDegreeController(hardwareMap.servo.get("wrist"), 300, 0.5);//TODO: set max and min (or zero pos)
+            wrist = new ServoDegreeController(hardwareMap.servo.get("wrist"), 300, 0, 0.5);//TODO: set max and min (or zero pos)
             perfectPixelPlacement = new PerfectPixelPlacement(arm, armServo,wrist, fcDistanceSensor);
             perfectPixelPlacement.setOffsets(81.28, 203.2);
             perfectPixelPlacement.setSpeed(1);
