@@ -86,7 +86,7 @@ public class PerfectPixelPlacement {
 
         arm.setLen(sa-172);
         Thread.sleep(20);
-        ssc.setTargetPos(Math.toDegrees(angle)/255);
+        ssc.setTargetPos(armServo.getPosFromAngle(Math.toDegrees(angle)));
         ssc.loopEvery();
     }
     public void executeWithReading(double targetHeight,double distance){
@@ -104,7 +104,7 @@ public class PerfectPixelPlacement {
         double sa = Math.sqrt(Math.pow(sb,2)+Math.pow(sc,2)-2*sb*sc*-0.5);
         double angle = FastMath.asin((sin60deg*sb)/sa); //IN RADIANS
         double wristAngle = 60 - Math.toDegrees(angle);
-        ssc.setTargetPos(Math.toDegrees(angle)/255);
+        ssc.setTargetPos(armServo.getPosFromAngle(Math.toDegrees(angle)));
         ssc.loopEvery();
         arm.setLen(sa-172);
     }
