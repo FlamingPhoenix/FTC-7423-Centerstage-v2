@@ -4,25 +4,28 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class ServoDegreeController {
     Servo servo;
-    double range, min, max;
+    double range, min, max, restPos;
     /**
      * Initialize ServoDegreeController
      * @param servo servo for controlling the servo
      * @param range range of the servo(degrees)
      * @param min minimum position of the servo
      * @param max maximum position of the servo
+     * @param restPos rest position of the servo
      */
-    public ServoDegreeController(Servo servo,double range, double min, double max){
+    public ServoDegreeController(Servo servo,double range, double min, double max, double restPos){
         this.servo = servo;
         this.range = range;
         this.min = min;
         this.max = max;
+        this.restPos = restPos;
     }
-    public ServoDegreeController(Servo servo, double range, double zeroPos){
+    public ServoDegreeController(Servo servo, double range, double zeroPos, double restPos){
         this.servo = servo;
         this.range = range;
         this.min = zeroPos*range-range/2;
         this.max = zeroPos*range+range/2;
+        this.restPos = restPos;
     }
     /**
      * Initialize ServoDegreeController

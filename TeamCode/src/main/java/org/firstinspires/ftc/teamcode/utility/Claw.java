@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Claw {
     Servo claw;
     double[] clawposs;
-    double openPos,halfOpenPos, closePos;
+    double openPos,halfOpenPos, closePos, restPos;
     boolean throwError = true;
     /**
      * Initialize Claw
@@ -13,12 +13,14 @@ public class Claw {
      * @param openPos position of the claw when it is open - drop all pixels
      * @param halfOpenPos position of the claw when it is half open - drop one pixel
      * @param closePos position of the claw when it is closed - pick up pixels
+     * @param restPos position of the claw when it is resting; the default position
      */
-    public Claw(Servo claw, double closePos, double halfOpenPos, double openPos){
+    public Claw(Servo claw, double closePos, double halfOpenPos, double openPos, double restPos){
         this.claw = claw;
         this.openPos = openPos;
         this.halfOpenPos = halfOpenPos;
         this.closePos = closePos;
+        this.restPos = restPos;
         clawposs = new double[]{closePos, halfOpenPos, openPos};
         claw.setPosition(openPos);
     }
@@ -28,9 +30,10 @@ public class Claw {
      * @param openPos position of the claw when it is open - drop all pixels
      * @param halfOpenPos position of the claw when it is half open - drop one pixel
      * @param closePos position of the claw when it is closed - pick up pixels
+     * @param restPos position of the claw when it is resting; the default position
      * @param throwError whether or not to throw an error when an invalid position is given in ezSetPos
      */
-    public Claw(Servo claw, double closePos, double halfOpenPos, double openPos, boolean throwError){
+    public Claw(Servo claw, double closePos, double halfOpenPos, double openPos, double restPos, boolean throwError){
         this.claw = claw;
         this.openPos = openPos;
         this.halfOpenPos = halfOpenPos;
