@@ -46,6 +46,7 @@ public class TeleOpMain extends OpMode {
             servoController.addState("transfer",new double[]{0.62,0.5,0,0.135});
             servoController.addState("low",new double[]{0.22333,0.41333,0.10166,0.7});
             servoController.addState("high",new double[]{0.22222,0.2655,0.1277,0.595});
+            servoController.addState("intake",new double[]{0.303,0.803,0.176,0.033});
             perfectPixelPlacement = new PerfectPixelPlacement(arm, armServo,wrist, frontDistanceSensor);
             perfectPixelPlacement.setOffsets(81.28, 203.2);
             perfectPixelPlacement.setSpeed(1);
@@ -63,11 +64,11 @@ public class TeleOpMain extends OpMode {
     @Override
     public void loop() {
         try {
-            if (gamepad2.left_bumper) {
-                speedMultiplier = 0.2;
-            } else {
-                speedMultiplier = 1;
-            }
+//            if (gamepad2.left_bumper) {
+//                speedMultiplier = 0.2;
+//            } else {
+//                speedMultiplier = 1;
+//            }
             double currentTime = timer.time(TimeUnit.MILLISECONDS);
             // CLAW LOGIC  // CLAW LOGIC  // CLAW LOGIC  // CLAW LOGIC  //
             if (gamepad2.x) {
@@ -77,24 +78,22 @@ public class TeleOpMain extends OpMode {
             } else if (gamepad2.b) {
                 claw.halfOpen();
             }
-            // ARM LOGIC  // ARM LOGIC  // ARM LOGIC  // ARM LOGIC  //
-            if (-gamepad2.left_stick_y > 0.1) {
-                height += -gamepad2.left_stick_y*3*speedMultiplier;
-            } else if (-gamepad2.left_stick_y < -0.1) {
-                height += -gamepad2.left_stick_y*3*speedMultiplier;
-            }
-            // 300 low, 600 mid 800 high
-            if(-gamepad2.right_stick_y>0.1) {
-                armServo.setPos(armServo.getPos()+0.01*speedMultiplier*Math.abs(-gamepad2.right_stick_y));
-            } else if(-gamepad2.right_stick_y<-0.1) {
-                armServo.setPos(armServo.getPos()-0.01*speedMultiplier*Math.abs(-gamepad2.right_stick_y));
-            }
-
-            //luke is working on this right now
-            //please don't touch before // DRIVE //
-//            if(gamepad1.left_trigger>0.1) {
-//                perfectPixelPlacement.executeWithSensorSpeededArm(height);
+//            // ARM LOGIC  // ARM LOGIC  // ARM LOGIC  // ARM LOGIC  //
+//            if (-gamepad2.left_stick_y > 0.1) {
+//                height += -gamepad2.left_stick_y*3*speedMultiplier;
+//            } else if (-gamepad2.left_stick_y < -0.1) {
+//                height += -gamepad2.left_stick_y*3*speedMultiplier;
 //            }
+//            // 300 low, 600 mid 800 high
+//            if(-gamepad2.right_stick_y>0.1) {
+//                armServo.setPos(armServo.getPos()+0.01*speedMultiplier*Math.abs(-gamepad2.right_stick_y));
+//            } else if(-gamepad2.right_stick_y<-0.1) {
+//                armServo.setPos(armServo.getPos()-0.01*speedMultiplier*Math.abs(-gamepad2.right_stick_y));
+//            }
+
+            if(gamepad1.left_trigger>0.1) {
+                  perfectPixelPlacement.executeWithSensorSpeededArm(height);
+            }
 //            if(gamepad2.right_bumper) {
 //                arm.setLen(500);
 //            }else{
@@ -107,13 +106,17 @@ public class TeleOpMain extends OpMode {
                 servoController.setState("high");
             } else if(gamepad2.dpad_right){
                 servoController.setState("low");
+            } else if(gamepad2.dpad_down){
+                servoController.setState("intake");
             }
+
             // DRIVE //
             drive.drive(gamepad1);
             //TELEMETRY //
             telemetry.addData("height", height);
             telemetry.addData("distance", frontDistanceSensor.getDistance(DistanceUnit.MM));
             telemetry.addData("time", currentTime);
+            telemetry.addData("currentState",servoController.getCurrentState());
             telemetry.update();
         }catch(Exception e) {
             if (throwErrors) {

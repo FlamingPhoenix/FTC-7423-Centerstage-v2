@@ -30,6 +30,9 @@ public class FieldCentricDrive {
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
         imu.initialize(parameters);
     }
+    public void setSpeed(double motorspeeed){
+        this.motorspeeed = motorspeeed;
+    }
     /**
      * Initialize motors
      * @param hardwareMap hardwareMap from opmode
