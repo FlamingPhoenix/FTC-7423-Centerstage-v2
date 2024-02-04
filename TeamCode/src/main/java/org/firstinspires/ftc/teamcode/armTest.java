@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.utility.ServoSpeedController;
-
+// this is a test program for the arm, it gives servo position and target position
 @TeleOp
 public class armTest extends OpMode {
     ServoSpeedController ssc;

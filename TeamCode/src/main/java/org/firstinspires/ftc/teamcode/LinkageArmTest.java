@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.utility.AxonServo;
 import org.firstinspires.ftc.teamcode.utility.FieldCentricDrive;
 import org.firstinspires.ftc.teamcode.utility.LinkageArm;
-
+// this is a test program for the Linkage arm, it has set positions controlled by gamepad buttons
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp()
 public class LinkageArmTest extends OpMode {
     FieldCentricDrive drive;
@@ -13,6 +13,7 @@ public class LinkageArmTest extends OpMode {
     LinkageArm arm;
     @Override
     public void init() {
+        //
         arm = new LinkageArm(hardwareMap.servo.get("linkage"), 215.9,298.45);//8.5 11.75 in
         drive = new FieldCentricDrive(hardwareMap);
         //armServo = new AxonServo(hardwareMap.servo.get("armservo"), hardwareMap.analogInput.get("axonin"));

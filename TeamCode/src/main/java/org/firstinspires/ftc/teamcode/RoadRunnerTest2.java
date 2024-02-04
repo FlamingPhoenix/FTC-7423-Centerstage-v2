@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-
+// tests roadrunner by moving a bit and rotating
 @Autonomous
 public class RoadRunnerTest2 extends LinearOpMode {
     @Override

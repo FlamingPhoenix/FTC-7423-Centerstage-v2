@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 
-public class AxonServo  {
+public class AxonServo{
     ServoImplEx motor;
     AnalogInput feedback;
     double restPos = 0;
@@ -33,6 +33,12 @@ public class AxonServo  {
         this.motor = (ServoImplEx) motor;
         this.feedback = potentiometer;
     }
+    /**
+     * Get the corresponding position the servo should be in in order for the servo to be at a certain angle (with respect to position 0 on the servo)
+     * @param angle the angle with respect to position 0 on the servo
+     * @return the corresponding servo position
+     */
+    public double getPosFromAngle(double angle){return angle/this.range;}
     public void setRange(double range){
         this.range = range;
     }
