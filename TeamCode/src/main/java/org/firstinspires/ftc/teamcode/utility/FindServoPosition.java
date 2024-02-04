@@ -36,10 +36,10 @@ public class FindServoPosition extends OpMode {
             incrementMultiplier = 1;
         }
         if(gamepad1.dpad_right && !didchange){
-            selectedServo = (selectedServo + 1) % (servos.length-1);
+            selectedServo = (selectedServo + 1) % (servos.length);
             didchange = true;
         }else if(gamepad1.dpad_left && !didchange){
-            selectedServo = (selectedServo - 1) % (servos.length-1);
+            selectedServo = (selectedServo - 1) % (servos.length);
             didchange = true;
         }else if(gamepad1.dpad_up && !didchange){
             servos[selectedServo].setPosition(servos[selectedServo].getPosition() + 0.001*incrementMultiplier);

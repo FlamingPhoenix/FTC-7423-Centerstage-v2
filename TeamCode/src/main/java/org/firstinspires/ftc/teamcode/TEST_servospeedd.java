@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.utility.ServoSpeedController;
-
+// servo with slower speed test
 @TeleOp
 public class TEST_servospeedd extends OpMode{
     ServoSpeedController servoSpeedController;
