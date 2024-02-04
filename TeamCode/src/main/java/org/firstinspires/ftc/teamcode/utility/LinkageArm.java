@@ -36,7 +36,7 @@ public class LinkageArm {
         this.maxLen = bar1len+bar2len;
     }
     /**
-     * Initialize LingateArm
+     * Initialize LinkageArm
      * @param motor Servo for controlling the linkage arm
      * @param bar1len length of the first bar
      * @param bar2len length of the second bar
