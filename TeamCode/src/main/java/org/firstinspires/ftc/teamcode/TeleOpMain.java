@@ -30,7 +30,7 @@ public class TeleOpMain extends OpMode {
     double height = 203;
     double speedMultiplier = 1;
 
-    boolean throwErrors = true;
+    boolean throwErrors = true; // SET TO FALSE IN COMPETITION ( KEEP TRUE DURING PRACTICE )
     @Override
     public void init() {
         try {
@@ -50,6 +50,9 @@ public class TeleOpMain extends OpMode {
             perfectPixelPlacement = new PerfectPixelPlacement(arm, armServo,wrist, frontDistanceSensor);
             perfectPixelPlacement.setOffsets(81.28, 203.2);
             perfectPixelPlacement.setSpeed(1);
+
+
+            servoController.setState("transfer");
         }catch(Exception e){
             if(throwErrors){
                 throw e;
@@ -69,6 +72,12 @@ public class TeleOpMain extends OpMode {
 //            } else {
 //                speedMultiplier = 1;
 //            }
+
+            if(gamepad1.left_bumper){
+                drive.setSpeed(0.3);
+            } else {
+                drive.setSpeed(0.5);
+            }
             double currentTime = timer.time(TimeUnit.MILLISECONDS);
             // CLAW LOGIC  // CLAW LOGIC  // CLAW LOGIC  // CLAW LOGIC  //
             if (gamepad2.x) {
@@ -78,6 +87,8 @@ public class TeleOpMain extends OpMode {
             } else if (gamepad2.b) {
                 claw.halfOpen();
             }
+//            //USE THIS FOR PERFECTPIXELPLACEMENT!!!!
+//
 //            // ARM LOGIC  // ARM LOGIC  // ARM LOGIC  // ARM LOGIC  //
 //            if (-gamepad2.left_stick_y > 0.1) {
 //                height += -gamepad2.left_stick_y*3*speedMultiplier;
@@ -101,13 +112,13 @@ public class TeleOpMain extends OpMode {
 //            }
 
             if(gamepad2.dpad_left){
-                servoController.setState("transfer");
+                servoController.setState("transfer"); // start position, claw tucked in
             } else if(gamepad2.dpad_up){
-                servoController.setState("high");
+                servoController.setState("high"); // backdrop high
             } else if(gamepad2.dpad_right){
-                servoController.setState("low");
+                servoController.setState("low"); // backdrop low
             } else if(gamepad2.dpad_down){
-                servoController.setState("intake");
+                servoController.setState("intake"); // arm extended, claw open on ground.
             }
 
             // DRIVE //
