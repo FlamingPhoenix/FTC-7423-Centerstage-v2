@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -24,6 +25,7 @@ public class TeleOpMain extends OpMode {
     PerfectPixelPlacement perfectPixelPlacement;
     DistanceSensor frontDistanceSensor;
     ServoDegreeController wrist;
+    ServoStates servoController;
     boolean debug = true;
     double height = 203;
     double speedMultiplier = 1;
@@ -39,6 +41,11 @@ public class TeleOpMain extends OpMode {
             arm = new LinkageArm(hardwareMap.servo.get("linkage"), 175, 236);
             armServo = new AxonServo(hardwareMap.servo.get("armservo"), hardwareMap.analogInput.get("axonin"));
             wrist = new ServoDegreeController(hardwareMap.servo.get("wrist"), 300, 0.5);//TODO: set max and min (or zero pos)
+            servoController = new ServoStates(new Servo[]{hardwareMap.servo.get("linkage"),hardwareMap.servo.get("wrist"),hardwareMap.servo.get("claw"),hardwareMap.servo.get("armservo")});
+
+            servoController.addState("transfer",new double[]{0.62,0.5,0,0.135});
+            servoController.addState("low",new double[]{0.22333,0.41333,0.10166,0.7});
+            servoController.addState("high",new double[]{0.22222,0.2655,0.1277,0.595});
             perfectPixelPlacement = new PerfectPixelPlacement(arm, armServo,wrist, frontDistanceSensor);
             perfectPixelPlacement.setOffsets(81.28, 203.2);
             perfectPixelPlacement.setSpeed(1);
@@ -85,13 +92,21 @@ public class TeleOpMain extends OpMode {
 
             //luke is working on this right now
             //please don't touch before // DRIVE //
-            if(gamepad1.left_trigger>0.1) {
-                perfectPixelPlacement.executeWithSensorSpeededArm(height);
-            }
-            if(gamepad2.right_bumper) {
-                arm.setLen(500);
-            }else{
-                arm.setLen(0);
+//            if(gamepad1.left_trigger>0.1) {
+//                perfectPixelPlacement.executeWithSensorSpeededArm(height);
+//            }
+//            if(gamepad2.right_bumper) {
+//                arm.setLen(500);
+//            }else{
+//                arm.setLen(0);
+//            }
+
+            if(gamepad2.dpad_left){
+                servoController.setState("transfer");
+            } else if(gamepad2.dpad_up){
+                servoController.setState("high");
+            } else if(gamepad2.dpad_right){
+                servoController.setState("low");
             }
             // DRIVE //
             drive.drive(gamepad1);
