@@ -50,7 +50,7 @@ public class ServoSpeedController {
             double delta = speed / 1000;
             double loops = error / delta;
             for (int i = 0; i < loops; i++) {
-                axonServo.setPos(axonServo.getPos() - delta);
+                axonServo.setPosition(axonServo.getPosition() - delta);
             }
         }
     }
@@ -69,7 +69,7 @@ public class ServoSpeedController {
             double delta = this.speed / 1000;
             double loops = error / delta;
             for (int i = 0; i < loops; i++) {
-                axonServo.setPos(axonServo.getPos() - delta);
+                axonServo.setPosition(axonServo.getPosition() - delta);
             }
         }
     }
@@ -80,7 +80,7 @@ public class ServoSpeedController {
                 servo.setPosition(servo.getPosition() - delta);
             }
             else{
-                axonServo.setPos(axonServo.getPos() - delta);
+                axonServo.setPosition(axonServo.getPosition() - delta);
             }
             loops--;
         }

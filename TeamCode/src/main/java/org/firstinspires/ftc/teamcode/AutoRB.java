@@ -74,7 +74,7 @@ public class AutoRB extends LinearOpMode {
 
 
         claw.close();
-        arm.setPos(armFloor);
+        arm.setPosition(armFloor);
         wrist.setPosition(wristFloor);
 
         sleep(500);
