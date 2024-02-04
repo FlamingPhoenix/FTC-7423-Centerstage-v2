@@ -73,7 +73,7 @@ public class AutoBlueBackdrop extends LinearOpMode {
         //        .build();
         waitForStart();
         if (isStopRequested()) return;
-        arm.setPos(armFloor);
+        arm.setPosition(armFloor);
         wrist.setPosition(wristFloor);
 
         sleep(500);
