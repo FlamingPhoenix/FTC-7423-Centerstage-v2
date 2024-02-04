@@ -76,14 +76,14 @@ public class AxonServo{
      * Get the position of the servo between 0 and 1
      * @return position between 0 and 1
      */
-    public double getPos() {
+    public double getPosition() {
         return motor.getPosition();
     }
     /**
      * Set the position of the servo between 0 and 1
      * @param pos position between 0 and 1
      */
-    public void setPos(double pos){
+    public void setPosition(double pos){
         motor.setPosition(pos);
     }
     /**

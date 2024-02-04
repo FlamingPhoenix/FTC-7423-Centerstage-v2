@@ -51,10 +51,10 @@ public class Claw {
     public void close(){
         claw.setPosition(closePos);
     }
-    public void setPos(double pos){
+    public void setPosition(double pos){
         claw.setPosition(pos);
     }
-    public double getPos(){
+    public double getPosition(){
         return claw.getPosition();
     }
     public void ezSetPos(int posID){

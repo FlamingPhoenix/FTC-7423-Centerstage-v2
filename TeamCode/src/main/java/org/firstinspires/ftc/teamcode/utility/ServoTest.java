@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.utility;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
-
+// test of servo at max and min positions
 @Autonomous
 public class ServoTest extends LinearOpMode {
 
