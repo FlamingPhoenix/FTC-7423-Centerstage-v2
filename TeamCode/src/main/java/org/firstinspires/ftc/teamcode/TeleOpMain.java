@@ -43,10 +43,12 @@ public class TeleOpMain extends OpMode {
             wrist = new ServoDegreeController(hardwareMap.servo.get("wrist"), 300, 0.5);//TODO: set max and min (or zero pos)
             servoController = new ServoStates(new Servo[]{hardwareMap.servo.get("linkage"),hardwareMap.servo.get("wrist"),hardwareMap.servo.get("claw"),hardwareMap.servo.get("armservo")});
 
-            servoController.addState("transfer",new double[]{0.62,0.5,0,0.135});
-            servoController.addState("low",new double[]{0.22333,0.41333,0.10166,0.7});
-            servoController.addState("high",new double[]{0.22222,0.2655,0.1277,0.595});
-            servoController.addState("intake",new double[]{0.303,0.803,0.176,0.033});
+            height=500;//mmm
+            servoController.addState("transfer",new double[]{0.836,0.62777,-1,0.035});
+            servoController.addState("intermediate",new double[]{0.6,-1,0,0.3});
+            servoController.addState("low",new double[]{0.31733,0.41333,-1,0.7});
+            servoController.addState("high",new double[]{0.31722,0.2655,-1,0.595});
+            servoController.addState("intake",new double[]{0.317,0.803,0.176,0.033});
             perfectPixelPlacement = new PerfectPixelPlacement(arm, armServo,wrist, frontDistanceSensor);
             perfectPixelPlacement.setOffsets(81.28, 203.2);
             perfectPixelPlacement.setSpeed(1);
@@ -95,12 +97,12 @@ public class TeleOpMain extends OpMode {
 //            } else if (-gamepad2.left_stick_y < -0.1) {
 //                height += -gamepad2.left_stick_y*3*speedMultiplier;
 //            }
-//            // 300 low, 600 mid 800 high
-//            if(-gamepad2.right_stick_y>0.1) {
-//                armServo.setPos(armServo.getPos()+0.01*speedMultiplier*Math.abs(-gamepad2.right_stick_y));
-//            } else if(-gamepad2.right_stick_y<-0.1) {
-//                armServo.setPos(armServo.getPos()-0.01*speedMultiplier*Math.abs(-gamepad2.right_stick_y));
-//            }
+            // 300 low, 600 mid 800 high
+            if(-gamepad2.right_stick_y>0.1) {
+                armServo.setPosition(armServo.getPosition()+0.01*speedMultiplier*Math.abs(-gamepad2.right_stick_y));
+            } else if(-gamepad2.right_stick_y<-0.1) {
+                armServo.setPosition(armServo.getPosition()-0.01*speedMultiplier*Math.abs(-gamepad2.right_stick_y));
+            }
 
             if(gamepad1.left_trigger>0.1) {
                   perfectPixelPlacement.executeWithSensorSpeededArm(height);
@@ -114,11 +116,23 @@ public class TeleOpMain extends OpMode {
             if(gamepad2.dpad_left){
                 servoController.setState("transfer"); // start position, claw tucked in
             } else if(gamepad2.dpad_up){
+                if(servoController.getCurrentState() == "transfer"){
+                    servoController.setState("intermediate");
+                    Thread.sleep(1000);
+                }
                 servoController.setState("high"); // backdrop high
             } else if(gamepad2.dpad_right){
+                if(servoController.getCurrentState() == "transfer"){
+                    servoController.setState("intermediate");
+                    Thread.sleep(1000);
+                }
                 servoController.setState("low"); // backdrop low
             } else if(gamepad2.dpad_down){
                 servoController.setState("intake"); // arm extended, claw open on ground.
+            }
+
+            if(gamepad2.right_trigger > 0.1){
+                perfectPixelPlacement.executeWithSensorSpeededArm(height);
             }
 
             // DRIVE //
