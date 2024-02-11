@@ -1,0 +1,24 @@
+
+CONSTANTS
+final double[] xpossB = {-40.96,-34.96,-28.96,-34.96};
+final double[] xpossR = {28.96, 34.96, 40.96, 34.96};
+final int[] rotsR = {270, 0, 90};
+final int[] rotsB = {90,180,-90};
+
+BLUE AUDIENCE
+drive.trajectorySequenceBuilder(new Pose2d(-60.00, -36.00, Math.toRadians(0.00)))
+                .lineTo(new Vector2d(-36.00, -36.00))
+                .turn(Math.toRadians(rotsB[detection])) // PLACE PURPLE PIXEL: claw on ground, halfOpen, close, transfer
+                .lineToConstantHeading(new Vector2d(-12.00, -36.00))
+                .turn(Math.toRadians((rotsB[detection]+270) % 360))
+                .waitSeconds(10)
+                .lineToConstantHeading(new Vector2d(-12.00, 12.00))
+                .splineToSplineHeading(new Pose2d(xpossB[detection], 48, Math.toRadians(90.00)), Math.toRadians(90.00))//PLACE YELLOW, use perfectPixelPlacement, full open, go to transfer
+                .lineToSplineHeading(new Pose2d(-60, 48, Math.toRadians(89.52)))
+                .build()
+RED BACKDROP
+drive.trajectorySequenceBuilder(new Pose2d(60.00, 12.00, Math.toRadians(180.00)))
+                .splineTo(new Vector2d(xpossR[detection], 48.00), Math.toRadians(90.00))// PIXEL YELLOW ON BACKDROP, use ppp, half open, close, transfer
+                .lineToLinearHeading(new Pose2d(36.00, 12.00, Math.toRadians(rotsR[detection])))//PLACE PURPLE: claw on ground, full open, transfer
+                .lineToSplineHeading(new Pose2d(60.00, 50.00, Math.toRadians(90.00)))
+                .build()

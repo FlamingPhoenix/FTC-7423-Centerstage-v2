@@ -47,7 +47,6 @@ public class TeleOpMain extends OpMode {
             wrist = new ServoDegreeController(hardwareMap.servo.get("wrist"), 300, 0.5);//TODO: set max and min (or zero pos)
             servoController = new ServoStates(new Servo[]{hardwareMap.servo.get("linkage"),hardwareMap.servo.get("wrist"),hardwareMap.servo.get("claw"),hardwareMap.servo.get("armservo")});
 
-            height=500;//mmm
             servoController.addState("transfer",new double[]{0.836,0.62777,-1,0.035});
             servoController.addState("transferInter",new double[]{0.836,0.62777,-1,0.10});
 
