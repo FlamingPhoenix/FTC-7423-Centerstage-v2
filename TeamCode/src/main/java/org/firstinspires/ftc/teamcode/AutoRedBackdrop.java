@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.teamcode.utility.Claw;
 import org.firstinspires.ftc.teamcode.utility.LinkageArm;
 import org.firstinspires.ftc.teamcode.utility.ServoDegreeController;
 import org.firstinspires.ftc.vision.VisionPortal;
-
+@Disabled
 @Autonomous
 public class AutoRedBackdrop extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "/sdcard/FIRST/tflitemodels/model.tflite";
