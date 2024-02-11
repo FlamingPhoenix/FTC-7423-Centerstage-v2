@@ -1,17 +1,20 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.utility.AxonServo;
 import org.firstinspires.ftc.teamcode.utility.Claw;
 import org.firstinspires.ftc.teamcode.utility.FieldCentricDrive;
 import org.firstinspires.ftc.teamcode.utility.LinkageArm;
 import org.firstinspires.ftc.teamcode.utility.ServoDegreeController;
+import org.firstinspires.ftc.teamcode.utility.ServoRelease;
 
 import java.util.concurrent.TimeUnit;
 
@@ -26,6 +29,7 @@ public class TeleOpMain extends OpMode {
     DistanceSensor frontDistanceSensor;
     ServoDegreeController wrist;
     ServoStates servoController;
+    ServoRelease drone;
     boolean debug = true;
     double height = 203;
     double speedMultiplier = 1;
@@ -55,6 +59,7 @@ public class TeleOpMain extends OpMode {
             perfectPixelPlacement.setOffsets(81.28, 203.2);
             perfectPixelPlacement.setSpeed(1);
 
+            drone = new ServoRelease(hardwareMap.servo.get("drone"), 0.5, 0.5);//TODO: get position
 
             servoController.setState("transfer");
         }catch(Exception e){
@@ -143,17 +148,18 @@ public class TeleOpMain extends OpMode {
 //            if(gamepad2.right_trigger > 0.1){
 //                perfectPixelPlacement.executeWithSensorSpeededArm(height);
 //            }
-            if(frontDistanceSensor.getDistance(DistanceUnit.MM) <= 700){
-                drive.orient(90);
-
+            if(gamepad1.right_bumper){
+                drive.orient(90); // 90 degrees
             }
-
+            if(gamepad1.x){
+                drone.release();
+            }
             // DRIVE //
             drive.drive(gamepad1);
             //TELEMETRY //
             telemetry.addData("height", height);
             telemetry.addData("distance", frontDistanceSensor.getDistance(DistanceUnit.MM));
-            telemetry.addData("time", currentTime);
+            telemetry.addData("heading", drive.getHeading(AngleUnit.DEGREES));
             telemetry.addData("currentState",servoController.getCurrentState());
             telemetry.update();
         }catch(Exception e) {

@@ -113,8 +113,8 @@ public class FieldCentricDrive {
     public void orient(double heading){
         double currentHeading = getHeading();
         double error = heading - currentHeading;
-        while(abs(error) > 0.1){
-            currentHeading = getHeading();
+        while(abs(error) > 10){
+            currentHeading = getHeading(AngleUnit.DEGREES);
             error = heading - currentHeading;
             if(error > 0){
                 fl.setPower(0.2);
@@ -144,10 +144,20 @@ public class FieldCentricDrive {
     public double getHeading(AngleUnit angleUnit){
         return imu.getRobotYawPitchRollAngles().getYaw(angleUnit);
     }
+
+    /**
+     * Stop all motors
+     */
     public void stop(){
         fl.setPower(0);
         bl.setPower(0);
         fr.setPower(0);
         br.setPower(0);
+    }
+    public void setAll(double power){
+        fl.setPower(power);
+        bl.setPower(power);
+        fr.setPower(power);
+        br.setPower(power);
     }
 }
