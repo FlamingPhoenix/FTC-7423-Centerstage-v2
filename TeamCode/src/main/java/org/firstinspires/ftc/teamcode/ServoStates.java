@@ -21,7 +21,18 @@ public class ServoStates {
         double[] state = states.get(name);
         currentState = name;
         for(int i  = 0; i< servos.length;i++){
-            servos[i].setPosition(state[i]);
+            if(state[i] != -1) {
+                servos[i].setPosition(state[i]);
+            }
+        }
+    }
+    public void setStateWithDelay(String name){
+        double[] state = states.get(name);
+        currentState = name;
+        for(int i  = 0; i< servos.length;i++){
+            if(state[i] != -1) {
+                servos[i].setPosition(state[i]);
+            }
         }
     }
     public String getCurrentState(){
