@@ -37,7 +37,7 @@ public class TeleOpMain extends OpMode {
             timer = new ElapsedTime();
             frontDistanceSensor = hardwareMap.get(DistanceSensor.class, "fc");
             drive = new FieldCentricDrive(hardwareMap);
-            claw = new Claw(hardwareMap.servo.get("claw"), 0, 0, 0,0, debug);//TODO set positions
+            claw = new Claw(hardwareMap.servo.get("claw"), 0, 0.053, 0.183,0.193, debug);//TODO set positions
             arm = new LinkageArm(hardwareMap.servo.get("linkage"), 175, 236);
             armServo = new AxonServo(hardwareMap.servo.get("armservo"), hardwareMap.analogInput.get("axonin"));
             wrist = new ServoDegreeController(hardwareMap.servo.get("wrist"), 300, 0.5);//TODO: set max and min (or zero pos)
@@ -45,11 +45,10 @@ public class TeleOpMain extends OpMode {
 
             height=500;//mmm
             servoController.addState("transfer",new double[]{0.836,0.62777,-1,0.035});
-            servoController.addState("transferInter",new double[]{0.836,0.62777,-1,0.10});
-            servoController.addState("intermediate",new double[]{0.6,-1,0,0.3});
+            servoController.addState("intermediate",new double[]{0.836,-1,0,0.4});
             servoController.addState("low",new double[]{0.31733,0.41333,-1,0.7});
             servoController.addState("high",new double[]{0.31722,0.2655,-1,0.595});
-            servoController.addState("intake",new double[]{0.317,0.803,0.176,0.033});
+            servoController.addState("intake",new double[]{0.317,0.783,0.176,0.033});
             perfectPixelPlacement = new PerfectPixelPlacement(arm, armServo,wrist, frontDistanceSensor);
             perfectPixelPlacement.setOffsets(81.28, 203.2);
             perfectPixelPlacement.setSpeed(1);
@@ -84,11 +83,11 @@ public class TeleOpMain extends OpMode {
             double currentTime = timer.time(TimeUnit.MILLISECONDS);
             // CLAW LOGIC  // CLAW LOGIC  // CLAW LOGIC  // CLAW LOGIC  //
             if (gamepad2.x) {
-                claw.open();
-            } else if (gamepad2.a) {
                 claw.close();
-            } else if (gamepad2.b) {
+            } else if (gamepad2.a) {
                 claw.halfOpen();
+            } else if (gamepad2.b) {
+                claw.open();
             }
 //            //USE THIS FOR PERFECTPIXELPLACEMENT!!!!
 //
@@ -105,9 +104,9 @@ public class TeleOpMain extends OpMode {
                 armServo.setPosition(armServo.getPosition()-0.01*speedMultiplier*Math.abs(-gamepad2.right_stick_y));
             }
 
-            /*if(gamepad1.left_trigger>0.1) {
-                  perfectPixelPlacement.executeWithSensorSpeededArm(height);
-            }*/
+//            if(gamepad1.left_trigger>0.1) {
+//                  perfectPixelPlacement.executeWithSensorSpeededArm(height);
+//            }
 //            if(gamepad2.right_bumper) {
 //                arm.setLen(500);
 //            }else{
@@ -115,27 +114,34 @@ public class TeleOpMain extends OpMode {
 //            }
 
             if(gamepad2.dpad_left){
-                servoController.setState("transferInter");
-                Thread.sleep(1000);
-                servoController.setState("transfer");// start position, claw tucked in
+                servoController.setState("transfer"); // start position, claw tucked in
             } else if(gamepad2.dpad_up){
                 if(servoController.getCurrentState() == "transfer"){
                     servoController.setState("intermediate");
+
+                    drive.stop();
                     Thread.sleep(1000);
                 }
-                servoController.setState("high"); // backdrop high
+//                servoController.customedSetState("high"); // backdrop high
+                servoController.setState("high");
             } else if(gamepad2.dpad_right){
                 if(servoController.getCurrentState() == "transfer"){
                     servoController.setState("intermediate");
+                    drive.stop();
                     Thread.sleep(1000);
                 }
-                servoController.setState("low"); // backdrop low
+//                servoController.customedSetState("low"); // backdrop low
+                servoController.setState("low");
             } else if(gamepad2.dpad_down){
                 servoController.setState("intake"); // arm extended, claw open on ground.
             }
 
-            if(gamepad2.right_trigger > 0.1){
-                perfectPixelPlacement.executeWithSensorSpeededArm(height);
+//            if(gamepad2.right_trigger > 0.1){
+//                perfectPixelPlacement.executeWithSensorSpeededArm(height);
+//            }
+            if(frontDistanceSensor.getDistance(DistanceUnit.MM) <= 700){
+                drive.orient(90);
+
             }
 
             // DRIVE //

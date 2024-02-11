@@ -24,11 +24,12 @@ public class FieldCentricDrive {
         bl = hardwareMap.dcMotor.get("bl");
         br = hardwareMap.dcMotor.get("br");
         //reverse motors
-        fr.setDirection(DcMotor.Direction.REVERSE);
-        br.setDirection(DcMotor.Direction.REVERSE);
+        fl.setDirection(DcMotor.Direction.REVERSE);
+        bl.setDirection(DcMotor.Direction.REVERSE);
         imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
         imu.initialize(parameters);
+        imu.resetYaw();
     }
     public void setSpeed(double motorspeeed){
         this.motorspeeed = motorspeeed;
@@ -82,7 +83,7 @@ public class FieldCentricDrive {
     public void drive(Gamepad gamepad1){
         double x = gamepad1.left_stick_x*1.1;
         double y = -gamepad1.left_stick_y;
-        double rx = gamepad1.right_stick_x;
+        double rx = -gamepad1.right_stick_x;
         double botHeading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);//might be degrees
         double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
         double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
@@ -109,8 +110,25 @@ public class FieldCentricDrive {
         fr.setPower(motorspeeed*frp);
         br.setPower(motorspeeed*brp);
     }
-
-
+    public void orient(double heading){
+        double currentHeading = getHeading();
+        double error = heading - currentHeading;
+        while(abs(error) > 0.1){
+            currentHeading = getHeading();
+            error = heading - currentHeading;
+            if(error > 0){
+                fl.setPower(0.2);
+                bl.setPower(0.2);
+                fr.setPower(-0.2);
+                br.setPower(-0.2);
+            }else{
+                fl.setPower(-0.2);
+                bl.setPower(-0.2);
+                fr.setPower(0.2);
+                br.setPower(0.2);
+            }
+        }
+    }
     /**
      * Get robot heading in radians
      * @return robot heading
@@ -125,5 +143,11 @@ public class FieldCentricDrive {
      */
     public double getHeading(AngleUnit angleUnit){
         return imu.getRobotYawPitchRollAngles().getYaw(angleUnit);
+    }
+    public void stop(){
+        fl.setPower(0);
+        bl.setPower(0);
+        fr.setPower(0);
+        br.setPower(0);
     }
 }
