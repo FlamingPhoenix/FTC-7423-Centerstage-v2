@@ -45,6 +45,8 @@ public class TeleOpMain extends OpMode {
 
             height=500;//mmm
             servoController.addState("transfer",new double[]{0.836,0.62777,-1,0.035});
+            servoController.addState("transferInter",new double[]{0.836,0.62777,-1,0.10});
+
             servoController.addState("intermediate",new double[]{0.836,-1,0,0.4});
             servoController.addState("low",new double[]{0.31733,0.41333,-1,0.7});
             servoController.addState("high",new double[]{0.31722,0.2655,-1,0.595});
@@ -115,6 +117,8 @@ public class TeleOpMain extends OpMode {
 
             if(gamepad2.dpad_left){
                 servoController.setState("transfer"); // start position, claw tucked in
+                Thread.sleep(500);
+                servoController.setState("transferInter");
             } else if(gamepad2.dpad_up){
                 if(servoController.getCurrentState() == "transfer"){
                     servoController.setState("intermediate");
