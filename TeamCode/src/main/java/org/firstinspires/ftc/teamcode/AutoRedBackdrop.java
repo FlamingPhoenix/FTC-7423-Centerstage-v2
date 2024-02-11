@@ -58,7 +58,7 @@ public class AutoRedBackdrop extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(36.00, 12.00, Math.toRadians(rotsR[detection])))
                 .build();
         TrajectorySequence park = drive.trajectorySequenceBuilder(go2spike.end())
-                .lineToSplineHeading(new Pose2d(59.84, 50.64, Math.toRadians(90.00)))
+                .lineToSplineHeading(new Pose2d(60.00, 50.00, Math.toRadians(90.00))) // PARK TOWARDS RED
                 .build();
         //GO TO SPIKE MARKS, PLACE PURPLE PIXEL
         //arm.setPosition([floor position])

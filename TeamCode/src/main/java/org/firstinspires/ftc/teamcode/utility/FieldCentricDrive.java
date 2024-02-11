@@ -29,6 +29,7 @@ public class FieldCentricDrive {
         imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
         imu.initialize(parameters);
+        imu.resetYaw();
     }
     public void setSpeed(double motorspeeed){
         this.motorspeeed = motorspeeed;
@@ -109,6 +110,25 @@ public class FieldCentricDrive {
         fr.setPower(motorspeeed*frp);
         br.setPower(motorspeeed*brp);
     }
+    public void orient(double heading){
+        double currentHeading = getHeading();
+        double error = heading - currentHeading;
+        while(abs(error) > 0.1){
+            currentHeading = getHeading();
+            error = heading - currentHeading;
+            if(error > 0){
+                fl.setPower(0.2);
+                bl.setPower(0.2);
+                fr.setPower(-0.2);
+                br.setPower(-0.2);
+            }else{
+                fl.setPower(-0.2);
+                bl.setPower(-0.2);
+                fr.setPower(0.2);
+                br.setPower(0.2);
+            }
+        }
+    }
     /**
      * Get robot heading in radians
      * @return robot heading
@@ -123,5 +143,11 @@ public class FieldCentricDrive {
      */
     public double getHeading(AngleUnit angleUnit){
         return imu.getRobotYawPitchRollAngles().getYaw(angleUnit);
+    }
+    public void stop(){
+        fl.setPower(0);
+        bl.setPower(0);
+        fr.setPower(0);
+        br.setPower(0);
     }
 }
