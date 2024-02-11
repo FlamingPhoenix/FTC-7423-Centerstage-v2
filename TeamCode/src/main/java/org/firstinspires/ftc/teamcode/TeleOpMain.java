@@ -45,6 +45,7 @@ public class TeleOpMain extends OpMode {
 
             height=500;//mmm
             servoController.addState("transfer",new double[]{0.836,0.62777,-1,0.035});
+            servoController.addState("transferInter",new double[]{0.836,0.62777,-1,0.10});
             servoController.addState("intermediate",new double[]{0.6,-1,0,0.3});
             servoController.addState("low",new double[]{0.31733,0.41333,-1,0.7});
             servoController.addState("high",new double[]{0.31722,0.2655,-1,0.595});
@@ -104,9 +105,9 @@ public class TeleOpMain extends OpMode {
                 armServo.setPosition(armServo.getPosition()-0.01*speedMultiplier*Math.abs(-gamepad2.right_stick_y));
             }
 
-            if(gamepad1.left_trigger>0.1) {
+            /*if(gamepad1.left_trigger>0.1) {
                   perfectPixelPlacement.executeWithSensorSpeededArm(height);
-            }
+            }*/
 //            if(gamepad2.right_bumper) {
 //                arm.setLen(500);
 //            }else{
@@ -114,7 +115,9 @@ public class TeleOpMain extends OpMode {
 //            }
 
             if(gamepad2.dpad_left){
-                servoController.setState("transfer"); // start position, claw tucked in
+                servoController.setState("transferInter");
+                Thread.sleep(1000);
+                servoController.setState("transfer");// start position, claw tucked in
             } else if(gamepad2.dpad_up){
                 if(servoController.getCurrentState() == "transfer"){
                     servoController.setState("intermediate");

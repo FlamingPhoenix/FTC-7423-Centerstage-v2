@@ -84,8 +84,8 @@ public class FieldCentricDrive {
         double y = -gamepad1.left_stick_y;
         double rx = gamepad1.right_stick_x;
         double botHeading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);//might be degrees
-        double rotX = -x * Math.cos(botHeading) - y * Math.sin(botHeading);
-        double rotY = -x * Math.sin(botHeading) + y * Math.cos(botHeading);
+        double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
+        double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
 
 
         double denominator = Math.max(abs(y) + abs(x) + abs(rx), 1);
@@ -109,6 +109,7 @@ public class FieldCentricDrive {
         fr.setPower(motorspeeed*frp);
         br.setPower(motorspeeed*brp);
     }
+
 
     /**
      * Get robot heading in radians
