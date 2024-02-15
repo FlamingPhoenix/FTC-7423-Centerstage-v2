@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.Math.min;
+
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.apache.commons.math3.util.FastMath;
@@ -76,7 +78,7 @@ public class PerfectPixelPlacement {
         double angle = FastMath.asin((sin60deg*sb)/sa); //IN RADIANS
 
 
-        arm.setLen(sa-172);
+        arm.setLen(min(0,sa-172));
         Thread.sleep(20);
         armServo.setPosRadians(angle);
     }
