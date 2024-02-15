@@ -17,10 +17,10 @@ public class TFOD {
         tfod = new TfodProcessor.Builder().setModelFileName(TFOD_MODEL_ASSET).build();
         VisionPortal.Builder builder = new VisionPortal.Builder();
         builder.setCamera(webcam);
-        builder.setCameraResolution(new Size(640, 640));
+        builder.setCameraResolution(new Size(1280, 720));
         builder.addProcessor(tfod);
         visionPortal = builder.build();
-        tfod.setMinResultConfidence(0.7f);
+        tfod.setMinResultConfidence(0.5f);
     }
     public static int getDetection() {
 
@@ -46,7 +46,7 @@ public class TFOD {
         int[] counts = new int[4];
         for(int i = 0; i<20; i++){
             counts[getDetection()]++;  //get 10 detections & note the outputs
-            Thread.sleep(10);
+            Thread.sleep(50);
         }
         int max = 0;
         int maxIndex = 0;
