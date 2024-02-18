@@ -31,6 +31,11 @@ public class FieldCentricDrive {
         imu.initialize(parameters);
         imu.resetYaw();
     }
+    public void resetIMU(){
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
+        imu.initialize(parameters);
+        imu.resetYaw();
+    }
     public void setSpeed(double motorspeeed){
         this.motorspeeed = motorspeeed;
     }
@@ -160,4 +165,41 @@ public class FieldCentricDrive {
         fr.setPower(power);
         br.setPower(power);
     }
+    /**
+     * Turn to specific angle relative to starting position
+     */
+    public void orientToAngle(double targetAngle) {
+        final double TOLERANCE = 0.5; // Degrees, adjust as needed for precision
+        final double MIN_SPEED = 0.2; // Minimum motor speed to overcome static friction
+        final double MAX_SPEED = 0.7; // Maximum motor speed for rotation
+        double currentHeading = getHeading(AngleUnit.DEGREES); // Current robot heading
+        double error = AngleUnit.normalizeDegrees(targetAngle - currentHeading); // Calculate initial error
+
+        // Continue adjusting while the error is outside the tolerance
+        while (Math.abs(error) > TOLERANCE) {
+            currentHeading = getHeading(AngleUnit.DEGREES); // Update current heading
+            error = AngleUnit.normalizeDegrees(targetAngle - currentHeading); // Recalculate error
+
+            // Proportional control for motor speed based on error magnitude
+            double speed = (error / 180) * (MAX_SPEED - MIN_SPEED) + MIN_SPEED;
+            speed = Math.copySign(Math.max(Math.abs(speed), MIN_SPEED), error); // Ensure minimum speed and correct direction
+
+            // Adjust motor speeds for rotation
+            if (error > 0) {
+                fl.setPower(speed);
+                bl.setPower(speed);
+                fr.setPower(-speed);
+                br.setPower(-speed);
+            } else {
+                fl.setPower(-speed);
+                bl.setPower(-speed);
+                fr.setPower(speed);
+                br.setPower(speed);
+            }
+        }
+
+        // Stop the robot once the target heading is reached
+        stop();
+    }
+
 }

@@ -20,4 +20,8 @@ public class ServoRelease {
     public void setPosition(double pos){
         servo.setPosition(pos);
     }
+    public double getPosition(){
+        return servo.getPosition();
+    }
+
 }

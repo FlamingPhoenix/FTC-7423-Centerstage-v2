@@ -69,6 +69,15 @@ public class LinkageArm {
         //servo range 300 degrees
         motor.setPosition((154-Math.toDegrees(angle))/180);
     }
+    public double getPosition(){
+        return motor.getPosition();
+    }
+    public void setPosition(double pos){
+        motor.setPosition(pos);
+    }
+
+
+
     /**
      * Get the length of the linkage arm
      * Don't rely upon this because I am lazy and don't want to do the math and github copilot just wrote this.
