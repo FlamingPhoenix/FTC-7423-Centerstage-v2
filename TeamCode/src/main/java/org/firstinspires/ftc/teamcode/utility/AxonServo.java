@@ -9,7 +9,7 @@ public class AxonServo{
     ServoImplEx motor;
     AnalogInput feedback;
     double restPos = 0;
-    double zeroPosOffset = 0;
+    double zeroPosOffset = 0.07;
     private double range = 255;
 
     /**

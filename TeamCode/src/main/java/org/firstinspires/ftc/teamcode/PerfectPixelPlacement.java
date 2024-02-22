@@ -129,10 +129,10 @@ public class PerfectPixelPlacement {
     // test function
     public double[] test(double targetHeight, double distance){
         double sc = distance+0.5*(pivotOffsetY / sin60deg)+ pivotOffsetX;
-        double sb = sec30deg*(cos30deg*targetHeight- pivotOffsetY);
+        double sb = sec30deg*(cos30deg*targetHeight - pivotOffsetY);
         double sa = Math.sqrt(Math.pow(sb,2)+Math.pow(sc,2)-2*sb*sc*-0.5);
         double angle = FastMath.asin((sin60deg*sb)/sa); //IN RADIANS
         double wristAngle = 60 - Math.toDegrees(angle);
-        return new double[]{sa,angle, wristAngle};
+        return new double[]{sa,Math.toDegrees(angle), wristAngle};
     }
 }

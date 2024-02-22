@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.autos;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.PlacementPosition;
+import org.firstinspires.ftc.teamcode.PropDetectionRed;
+import org.firstinspires.ftc.teamcode.ServoStates;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.utility.AxonServo;
@@ -17,10 +20,10 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous
-public class CloseBlueAuto extends LinearOpMode {
+public class CloseRedAuto extends LinearOpMode {
 
 
-    PropDetectionBlue propDetectionRed;
+    PropDetectionRed propDetectionRed;
     OpenCvCamera camera;
     String webcamName = "Webcam 1";
 
@@ -31,15 +34,12 @@ public class CloseBlueAuto extends LinearOpMode {
     ServoStates servoController;
     final double armFloor = 0.005;
     final double wristFloor = 0.347;
-    final double[] xpossR = {32.96, 26.96,20.96};
+    final double[] xpossR = {23.96, 29.96, 35.96};
     final int[] rotsR = {90, 0, 270};
-    final double[] spikePlaceX = {0, 2.5, -1.2};
-    final double[] spikePlaceY = {4, 6, -3};
-
-
-
+    final double[] spikePlaceX = {0, -1.2, 1.2};
+    final double[] spikePlaceY = {4, 6, -1};
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException{
 
         claw = new Claw(hardwareMap.servo.get("claw"), 0, 0.43, 0.562,0.562, true);//TODO set positions
         arm = new LinkageArm(hardwareMap.servo.get("linkage"), 175, 236);
@@ -59,14 +59,13 @@ public class CloseBlueAuto extends LinearOpMode {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, webcamName), cameraMonitorViewId);
-        propDetectionRed = new PropDetectionBlue();
+        propDetectionRed = new PropDetectionRed();
         camera.setPipeline(propDetectionRed);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startPose = new Pose2d(60, 12, Math.toRadians(180));
         drive.setPoseEstimate(startPose);
         claw.setPosition(0f);
         servoController.setState("transferIntake");
-
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
@@ -82,9 +81,9 @@ public class CloseBlueAuto extends LinearOpMode {
 
         while (!isStarted()) {
             telemetry.addData("ROTATION: ", propDetectionRed.getPlacementPosition());
-            telemetry.addData("Blue Amount 1: ", propDetectionRed.getRedAmount1());
-            telemetry.addData("Blue Amount 2: ", propDetectionRed.getRedAmount2());
-            telemetry.addData("Blue Amount 3: ", propDetectionRed.getRedAmount3());
+            telemetry.addData("Red Amount 1: ", propDetectionRed.getRedAmount1());
+            telemetry.addData("Red Amount 2: ", propDetectionRed.getRedAmount2());
+            telemetry.addData("Red Amount 3: ", propDetectionRed.getRedAmount3());
 
 
             telemetry.update();
@@ -93,8 +92,6 @@ public class CloseBlueAuto extends LinearOpMode {
         waitForStart();
 
         PlacementPosition placementPosition = propDetectionRed.getPlacementPosition();
-
-        // Notify subsystems before loop
         int detection = 1;
         switch (placementPosition) {
             case RIGHT:
@@ -112,7 +109,7 @@ public class CloseBlueAuto extends LinearOpMode {
         }
         telemetry.update();
         TrajectorySequence ts = drive.trajectorySequenceBuilder(new Pose2d(60.00, 12.00, Math.toRadians(180.00)))
-                .lineToSplineHeading(new Pose2d(xpossR[detection], -32.50, Math.toRadians(270.00))) //ADJUST Y TO YOUR NEEDS (FROM ARMBACKDROP position)
+                .lineToSplineHeading(new Pose2d(xpossR[detection], 56.50, Math.toRadians(90.00))) //ADJUST Y TO YOUR NEEDS (FROM ARMBACKDROP position)
                 .addTemporalMarker(0.5,() -> {
                     servoController.setState("intermediate");
                 })
@@ -130,7 +127,7 @@ public class CloseBlueAuto extends LinearOpMode {
                     servoController.setState("transferIntake");
                 })
                 .waitSeconds(2)
-                .lineToLinearHeading(new Pose2d(30.50 + spikePlaceX[detection], 12.00 + spikePlaceY[detection], Math.toRadians(rotsR[detection])))//PLACE PURPLE: claw on ground, full open, transfer
+                .lineToLinearHeading(new Pose2d(30.50 + spikePlaceX[detection], 12.00, Math.toRadians(rotsR[detection])))//PLACE PURPLE: claw on ground, full open, transfer
                 .addTemporalMarker(() -> {
                     armServo.setPosition(armFloor);
                     wrist.setPosition(wristFloor);
@@ -141,7 +138,7 @@ public class CloseBlueAuto extends LinearOpMode {
                     claw.close();
                     servoController.setState("transferIntake");
                 })
-                .lineToSplineHeading(new Pose2d(63.00, -31.00, Math.toRadians(270.00)))
+                .lineToSplineHeading(new Pose2d(63.00, 55.00, Math.toRadians(90.00)))
                 .build();
         drive.followTrajectorySequence(ts);
 

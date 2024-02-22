@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.autos;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -10,6 +10,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.PerfectPixelPlacement;
+import org.firstinspires.ftc.teamcode.ServoStates;
+import org.firstinspires.ftc.teamcode.TFOD;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.utility.AxonServo;
@@ -17,16 +20,14 @@ import org.firstinspires.ftc.teamcode.utility.Claw;
 import org.firstinspires.ftc.teamcode.utility.LinkageArm;
 import org.firstinspires.ftc.teamcode.utility.ServoDegreeController;
 import org.firstinspires.ftc.vision.VisionPortal;
-
-@Disabled//TAJECTORIES NOT CORRECT
+@Disabled
 @Autonomous
-public class AutoBlueBackdrop extends LinearOpMode {
+public class AutoRedBackdrop extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "/sdcard/FIRST/tflitemodels/model.tflite";
 
-    final double[] xpossB = {-40.96,-34.96,-28.96,-34.96};
-    //final double[] xpossR = {28.96, 34.96, 40.96, 34.96};
-    //final int[] rotsR = {270, 0, 90};
-    final int[] rotsB = {90,180,-90};
+    //final double[] xpossB = {-40.96,-34.96,-28.96,-34.96};
+    final double[] xpossR = {28.96, 34.96, 40.96, 34.96};
+    final int[] rotsR = {270, 180, 90};
 
     final double armBackdrop = 0.0000000000;//TODO: GET THESE VALUES!!!!!!!
     final double wristBackdrop = 0.0000000000;
@@ -50,22 +51,18 @@ public class AutoBlueBackdrop extends LinearOpMode {
         servoController.addState("high", new double[]{0.22222, 0.2655, 0.1277, 0.595});
         servoController.addState("intake", new double[]{0.303, 0.803, 0.176, 0.033});
         int detection = TFOD.getPos();
-        Pose2d startPose = new Pose2d(-60, 12, Math.toRadians(180));
+        Pose2d startPose = new Pose2d(60, 12, Math.toRadians(180));
         drive.setPoseEstimate(startPose);
 
         //PerfectPixelPlacement ppp = new PerfectPixelPlacement(172,arm,wrist);
-        TrajectorySequence go2spike = drive.trajectorySequenceBuilder(new Pose2d(-60.00, -36.00, Math.toRadians(0.00)))
-                .lineTo(new Vector2d(-36.00, -36.00))
-                .turn(Math.toRadians(rotsB[detection]))
+        TrajectorySequence go2backdrop = drive.trajectorySequenceBuilder(new Pose2d(60.00, 12.00, Math.toRadians(180.00)))
+                .splineTo(new Vector2d(xpossR[detection], 48.00), Math.toRadians(90.00))//TODO: PERFECT y
                 .build();
-
-        TrajectorySequence go2backdrop = drive.trajectorySequenceBuilder(go2spike.end()).lineToConstantHeading(new Vector2d(-12.00, -36.00))
-                .turn(Math.toRadians((rotsB[detection]+270) % 360))
-                .lineToConstantHeading(new Vector2d(-12.00, 12.00))
-                .splineToSplineHeading(new Pose2d(xpossB[detection], 48, Math.toRadians(90.00)), Math.toRadians(90.00))
+        TrajectorySequence go2spike = drive.trajectorySequenceBuilder(go2backdrop.end())
+                .lineToLinearHeading(new Pose2d(36.00, 12.00, Math.toRadians(rotsR[detection])))
                 .build();
-        TrajectorySequence park = drive.trajectorySequenceBuilder(go2backdrop.end())
-                .lineToSplineHeading(new Pose2d(-60, 48, Math.toRadians(90)))
+        TrajectorySequence park = drive.trajectorySequenceBuilder(go2spike.end())
+                .lineToSplineHeading(new Pose2d(60.00, 50.00, Math.toRadians(90.00))) // PARK TOWARDS RED
                 .build();
         //GO TO SPIKE MARKS, PLACE PURPLE PIXEL
         //arm.setPosition([floor position])
@@ -75,29 +72,27 @@ public class AutoBlueBackdrop extends LinearOpMode {
         //        .build();
         waitForStart();
         if (isStopRequested()) return;
-        arm.setPosition(armFloor);
-        wrist.setPosition(wristFloor);
-
-        sleep(500);
-
-        drive.followTrajectorySequence(go2spike);
-
-        sleep(1000);
-
-        claw.halfOpen();
-
-
-        sleep(1000);
-
-
-        claw.close();
-
         drive.followTrajectorySequence(go2backdrop);
         //arm.setPos(armBackdrop);
         //wrist.setPosition(wristBackdrop);
         double distance = fcDistanceSensor.getDistance(DistanceUnit.MM);
         ppp.executeForAuto(distance, 400);
 //        servoController.setState("low");
+
+        sleep(3000);
+
+        claw.halfOpen();
+
+        sleep(1000);
+
+
+        claw.close();
+        arm.setPosition(armFloor);
+        wrist.setPosition(wristFloor);
+
+        sleep(500);
+
+        drive.followTrajectorySequence(go2spike);
 
         sleep(1000);
 
