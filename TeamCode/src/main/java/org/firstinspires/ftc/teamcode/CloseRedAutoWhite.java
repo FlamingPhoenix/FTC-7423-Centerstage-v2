@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.autos.OpenCVPropDetector;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.utility.AxonServo;
@@ -55,10 +57,7 @@ public class CloseRedAutoWhite extends LinearOpMode {
         servoController.addState("intakeNew",new double[]{0.300,0.29,0,0.1});
 
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, webcamName), cameraMonitorViewId);
-        propDetectionRed = new PropDetectionRed();
-        camera.setPipeline(propDetectionRed);
+        OpenCVPropDetector propDetectionRed = new OpenCVPropDetector(hardwareMap);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startPose = new Pose2d(60, 12, Math.toRadians(180));
         drive.setPoseEstimate(startPose);
@@ -78,10 +77,7 @@ public class CloseRedAutoWhite extends LinearOpMode {
 
 
         while (!isStarted()) {
-            telemetry.addData("ROTATION: ", propDetectionRed.getPlacementPosition());
-            telemetry.addData("Red Amount 1: ", propDetectionRed.getRedAmount1());
-            telemetry.addData("Red Amount 2: ", propDetectionRed.getRedAmount2());
-            telemetry.addData("Red Amount 3: ", propDetectionRed.getRedAmount3());
+            telemetry.addData("ROTATION: ", propDetectionRed.detectRed());
 
 
             telemetry.update();
@@ -89,8 +85,8 @@ public class CloseRedAutoWhite extends LinearOpMode {
 
         waitForStart();
 
-        PlacementPosition placementPosition = propDetectionRed.getPlacementPosition();
-        int detection = 1;
+        PlacementPosition placementPosition = propDetectionRed.detectRed();
+        int detection = placementPosition.getValue();
         switch (placementPosition) {
             case RIGHT:
                 telemetry.addLine("RIGHT");
@@ -113,16 +109,16 @@ public class CloseRedAutoWhite extends LinearOpMode {
                 .addTemporalMarker(1,() -> {
                     servoController.setState("high");
                 })
-                .waitSeconds(1f)
+                .waitSeconds(1)
                 .addTemporalMarker(()->{
                     claw.halfOpen();
                 })
-                .waitSeconds(0.5f)
+                .waitSeconds(0.5)
                 .addTemporalMarker(()->{
                     claw.close();
                     servoController.setState("transfer");
                 })
-                .waitSeconds(0.5f)
+                .waitSeconds(0.5)
                 .lineToLinearHeading(new Pose2d(20, 54-spikePlaceY[detection], Math.toRadians(rotsR[detection])))//PLACE PURPLE: claw on ground, full open, transfer
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     servoController.setState("intakeNew");
@@ -131,11 +127,35 @@ public class CloseRedAutoWhite extends LinearOpMode {
                 .addTemporalMarker(()->{
                     claw.setPosition(0.65f);
                 })
-                .waitSeconds(0.5f)
+                .waitSeconds(0.5)
                 .addTemporalMarker(()->{
                     servoController.setState("transferIntake");
                 })
                 .lineToSplineHeading(new Pose2d(63.00, 55.00, Math.toRadians(90.00)))
+                .build();
+
+
+        TrajectorySequence whitets = drive.trajectorySequenceBuilder(ts.end())
+                .splineToConstantHeading(new Vector2d(13.00, -0.00),Math.toRadians(270.00))
+                .lineTo(new Vector2d(13.00, -24.00))
+                .splineToConstantHeading(new Vector2d(36.00, -50.00),Math.toRadians(270))
+                .waitSeconds(1) // PICK UP WHITE
+                .setTangent(0)
+                .splineToConstantHeading(new Vector2d(60, -24),Math.toRadians(90))
+                .lineTo(new Vector2d(60,0))
+                .splineToConstantHeading(new Vector2d(44.00, 50.00), Math.toRadians(90))
+                .waitSeconds(1.7) // PLACE 2 WHITE
+
+
+                .lineToConstantHeading(new Vector2d(60.00, -0.00))
+                .lineTo(new Vector2d(60.00, -24.00))
+                .splineToConstantHeading(new Vector2d(36.00, -50.00),Math.toRadians(270))
+                .waitSeconds(1)
+                .setTangent(0)
+                .splineToConstantHeading(new Vector2d(60, -24),Math.toRadians(90))
+                .lineTo(new Vector2d(60,0))
+                .splineToConstantHeading(new Vector2d(44.00, 50.00), Math.toRadians(90.00))
+                .waitSeconds(1.7)
                 .build();
         drive.followTrajectorySequence(ts);
 
