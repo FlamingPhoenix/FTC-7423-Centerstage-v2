@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.utility.FieldCentricDrive;
 import org.firstinspires.ftc.teamcode.utility.LinkageArm;
 import org.firstinspires.ftc.teamcode.utility.ServoDegreeController;
 import org.firstinspires.ftc.teamcode.utility.ServoRelease;
+import org.firstinspires.ftc.teamcode.utility.utils;
 
 import java.util.concurrent.TimeUnit;
 
@@ -90,13 +91,10 @@ public class TeleOpMain extends OpMode {
             if(servoController.getCurrentState() == "transferIntake"){
                 servoController.setState("intermediate");
                 drive.stop();
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                utils.setTimeout(()->servoController.setState("high"), 500);
+            }else {
+                servoController.setState("high");
             }
-            servoController.setState("high");
         } else if(gamepad2.dpad_right){
             claw.setPosition(0f);
             servoController.setState("transferIntake");
