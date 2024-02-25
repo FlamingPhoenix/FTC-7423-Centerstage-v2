@@ -1,4 +1,6 @@
 package org.firstinspires.ftc.teamcode;
+import static java.lang.Thread.sleep;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -28,7 +30,7 @@ public class TeleOpMain extends OpMode {
     @Override
     public void init() {
         drive = new FieldCentricDrive(hardwareMap);
-        claw = new Claw(hardwareMap.servo.get("claw"), 0, 0.43, 0.562,0.562, true);
+        claw = new Claw(hardwareMap.servo.get("claw"), 0, 0.1234, 0.362,0.362, true);
         arm = new LinkageArm(hardwareMap.servo.get("linkage"), 175, 236);
         armServo = new AxonServo(hardwareMap.servo.get("armservo"), hardwareMap.analogInput.get("axonin"));
         wrist = new ServoDegreeController(hardwareMap.servo.get("wrist"), 300, 0.5);
@@ -38,14 +40,15 @@ public class TeleOpMain extends OpMode {
         servoController.addState("transferIntake",new double[]{0.88,0.889,-1,0.035});
 
         servoController.addState("transferInter",new double[]{0.836,0.62777,-1,0.10});
+        servoController.addState("first",new double[]{1,0.748,-1,0.62});
 
         servoController.addState("intermediate",new double[]{0.836,-1,0,0.4});
         servoController.addState("low",new double[]{0.31733,0.41333,-1,0.7});
         servoController.addState("high",new double[]{0.31722,0.748,-1,0.595});
-        servoController.addState("intake",new double[]{0.88,0.347,0.562,0.005});
+        servoController.addState("intake",new double[]{0.88,0.322,0.562,0.005});
 
         drone = hardwareMap.servo.get("drone");
-
+        drone.setPosition(0.2133f);
         servoController.setState("transfer");
     }
 
@@ -55,11 +58,11 @@ public class TeleOpMain extends OpMode {
             drive.resetIMU();
         }
         // CLAW LOGIC  // CLAW LOGIC  // CLAW LOGIC  // CLAW LOGIC  //
-        if (gamepad2.x) {
+        if (gamepad1.x) {
             claw.close();
-        } else if (gamepad2.a) {
+        } else if (gamepad1.a) {
             claw.halfOpen();
-        } else if (gamepad2.b) {
+        } else if (gamepad1.b) {
             claw.open();
         }
 
@@ -87,7 +90,11 @@ public class TeleOpMain extends OpMode {
             if(servoController.getCurrentState() == "transferIntake"){
                 servoController.setState("intermediate");
                 drive.stop();
-
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
             servoController.setState("high");
         } else if(gamepad2.dpad_right){
@@ -95,13 +102,16 @@ public class TeleOpMain extends OpMode {
             servoController.setState("transferIntake");
         } else if(gamepad2.dpad_down){
             servoController.setState("intake"); // arm extended, claw open on ground.
+        } else if(gamepad2.right_bumper){
+            servoController.setState("first"); // arm extended, claw open on ground.
         }
 
-        if(gamepad1.x){
-            drone.setPosition(0.7f);
+
+        if(gamepad2.x){
+            drone.setPosition(0.2133f);
         }
-        if(gamepad1.a){
-            drone.setPosition(0.9f);
+        if(gamepad2.a){
+            drone.setPosition(0.34f);
         }
 
 
