@@ -50,4 +50,34 @@ public class utils {
         return (val - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
     }
 
+    public static double average(double ... values ){
+        double sum = 0;
+        for (double value : values) {
+            sum += value;
+        }
+        return sum / values.length;
+    }
+    public static double median(double ... values ){
+        int middle = values.length/2;
+        if (values.length%2 == 1) {
+            return values[middle];
+        } else {
+            return (values[middle-1] + values[middle]) / 2.0;
+        }
+    }
+    public static double mode(double ... values ){
+        double mode = values[0];
+        int maxCount = 0;
+        for (int i = 0; i < values.length; i++) {
+            int count = 0;
+            for (int j = 0; j < values.length; j++) {
+                if (values[j] == values[i]) ++count;
+            }
+            if (count > maxCount) {
+                maxCount = count;
+                mode = values[i];
+            }
+        }
+        return mode;
+    }
 }
