@@ -18,7 +18,7 @@ public class AprilTagAligner{
 
     private AprilTagDetection desiredTag;
     boolean targetFound = false;
-    final double DESIRED_DISTANCE = 12.0; //  this is how close the camera should get to the target (inches)
+    double DESIRED_DISTANCE = 12.0; //  this is how close the camera should get to the target (inches)
 
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
@@ -43,7 +43,6 @@ public class AprilTagAligner{
         fr.setDirection(DcMotor.Direction.REVERSE);
         br.setDirection(DcMotor.Direction.REVERSE);
 
-
     }
     public List<AprilTagDetection> getDetections(){
         return aprilTag.getDetections();
@@ -53,8 +52,10 @@ public class AprilTagAligner{
      * Aligns the robot to the desired april tag
      * takes time!!!!!!!
      * @param id the id of the tag to align to
+     * @param desiredDistance the distance to the tag
      */
-    public void alignRobot(int id){
+    public void alignRobot(int id, double desiredDistance){
+        DESIRED_DISTANCE = desiredDistance;
         while(rangeError > 1.0 && headingError > 1.0 && yawError > 1.0) {
             List<AprilTagDetection> detections = getDetections();
             for (AprilTagDetection detection : detections) {
