@@ -1,21 +1,22 @@
 package org.firstinspires.ftc.teamcode.utility;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class utils {
+    static Timer scheduler = new Timer();
     /**
      * Run a function after a delay asynchronously
      * @param runnable The function to run - can be a lambda
      * @param delay milliseconds to wait before running the function
      */
     public static void setTimeout(Runnable runnable, int delay){
-        new Thread(() -> {
-            try {
-                Thread.sleep(delay);
+        scheduler.schedule(new TimerTask() {
+            @Override
+            public void run() {
                 runnable.run();
             }
-            catch (Exception e){
-                System.err.println(e);
-            }
-        }).start();
+        }, delay);
     }
 
     /**
@@ -50,4 +51,34 @@ public class utils {
         return (val - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
     }
 
+    public static double average(double ... values ){
+        double sum = 0;
+        for (double value : values) {
+            sum += value;
+        }
+        return sum / values.length;
+    }
+    public static double median(double ... values ){
+        int middle = values.length/2;
+        if (values.length%2 == 1) {
+            return values[middle];
+        } else {
+            return (values[middle-1] + values[middle]) / 2.0;
+        }
+    }
+    public static double mode(double ... values ){
+        double mode = values[0];
+        int maxCount = 0;
+        for (int i = 0; i < values.length; i++) {
+            int count = 0;
+            for (int j = 0; j < values.length; j++) {
+                if (values[j] == values[i]) ++count;
+            }
+            if (count > maxCount) {
+                maxCount = count;
+                mode = values[i];
+            }
+        }
+        return mode;
+    }
 }

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.autos;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import org.firstinspires.ftc.teamcode.utility.utils;
 
 @Autonomous(name = "No Auto Forward Without Roadrunner")
 
@@ -35,7 +36,7 @@ public class NoAutoForwardNoRoadrunner extends LinearOpMode {
 
         int current = 0;
         while (current < target) {
-            ++current;
+            current = (int) utils.average(leftFront.getCurrentPosition(), leftBack.getCurrentPosition(), rightFront.getCurrentPosition(), rightBack.getCurrentPosition());
         }
 
         leftFront.setPower(0);
