@@ -1,21 +1,22 @@
 package org.firstinspires.ftc.teamcode.utility;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class utils {
+    static Timer scheduler = new Timer();
     /**
      * Run a function after a delay asynchronously
      * @param runnable The function to run - can be a lambda
      * @param delay milliseconds to wait before running the function
      */
     public static void setTimeout(Runnable runnable, int delay){
-        new Thread(() -> {
-            try {
-                Thread.sleep(delay);
+        scheduler.schedule(new TimerTask() {
+            @Override
+            public void run() {
                 runnable.run();
             }
-            catch (Exception e){
-                System.err.println(e);
-            }
-        }).start();
+        }, delay);
     }
 
     /**
