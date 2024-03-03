@@ -31,7 +31,7 @@ public class TeleOpMain extends OpMode {
     @Override
     public void init() {
         drive = new FieldCentricDrive(hardwareMap);
-        claw = new Claw(hardwareMap.servo.get("claw"), 0, 0.1234, 0.362,0.362, true);
+        claw = new Claw(hardwareMap.servo.get("claw"), 0, 0.411, 0.592,0.362, true);
         arm = new LinkageArm(hardwareMap.servo.get("linkage"), 175, 236);
         armServo = new AxonServo(hardwareMap.servo.get("armservo"), hardwareMap.analogInput.get("axonin"));
         wrist = new ServoDegreeController(hardwareMap.servo.get("wrist"), 300, 0.5);
@@ -46,10 +46,13 @@ public class TeleOpMain extends OpMode {
         servoController.addState("intermediate",new double[]{0.836,-1,0,0.4});
         servoController.addState("low",new double[]{0.31733,0.41333,-1,0.7});
         servoController.addState("high",new double[]{0.31722,0.748,-1,0.595});
-        servoController.addState("intake",new double[]{0.88,0.322,0.562,0.005});
+        servoController.addState("mid",new double[]{0.556,0.748,-1,0.595});
+        servoController.addState("intakeNew",new double[]{0.300,0.3188,0.592,0.75});
+
+        servoController.addState("intake",new double[]{0.88,0.322,0.592,0.005});
 
         drone = hardwareMap.servo.get("drone");
-        drone.setPosition(0.2133f);
+        drone.setPosition(0.753f);
         servoController.setState("transfer");
     }
 
@@ -77,6 +80,11 @@ public class TeleOpMain extends OpMode {
         } else if(-gamepad2.left_stick_y<-0.1) {
             wrist.setPosition(wrist.getPosition()-0.01*Math.abs(-gamepad2.left_stick_y));
         }
+        if(gamepad2.right_trigger>0.1) {
+            arm.setPosition(arm.getPosition()+0.5*Math.abs(gamepad2.right_trigger));
+        } else if(gamepad2.left_trigger>0.1) {
+            arm.setPosition(arm.getPosition()-0.05*Math.abs(gamepad2.left_trigger));
+        }
         if(gamepad2.right_bumper && -0.001+claw.getPosition()>0){
             claw.setPosition(claw.getPosition()-0.005);
         }
@@ -91,10 +99,14 @@ public class TeleOpMain extends OpMode {
             if(servoController.getCurrentState() == "transferIntake"){
                 servoController.setState("intermediate");
                 drive.stop();
-                utils.setTimeout(()->servoController.setState("high"), 500);
-            }else {
-                servoController.setState("high");
+
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
+            servoController.setState("high");
         } else if(gamepad2.dpad_right){
             claw.setPosition(0f);
             servoController.setState("transferIntake");
@@ -103,14 +115,17 @@ public class TeleOpMain extends OpMode {
         } else if(gamepad2.right_bumper){
             servoController.setState("first"); // arm extended, claw open on ground.
         }
-
-
-        if(gamepad2.x){
-            drone.setPosition(0.2133f);
+        else if(gamepad2.x){
+            servoController.setState("intakeNew");
         }
+        else if(gamepad2.left_bumper){
+            servoController.setState("mid");
+        }
+
         if(gamepad2.a){
-            drone.setPosition(0.34f);
+            drone.setPosition(0.44f);
         }
+
 
 
         // DRIVE //
