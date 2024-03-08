@@ -30,6 +30,8 @@ public class NewRedAutoWhite extends LinearOpMode {
     LinkageArm arm;
     ServoDegreeController wrist;
     ServoStates servoController;
+    AprilTagAligner aprilTagAlignerFront;
+    AprilTagAligner aprilTagAlignerBack;
     final double armFloor = 0.005;
     final double wristFloor = 0.347;
     final double[] xpossR = {35.96, 29.96, 23.96};
@@ -39,6 +41,8 @@ public class NewRedAutoWhite extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException{
 
+        aprilTagAlignerBack = new AprilTagAligner(hardwareMap, "back");
+        aprilTagAlignerFront = new AprilTagAligner(hardwareMap, "front");
         claw = new Claw(hardwareMap.servo.get("claw"), 0, 0.1234, 0.362,0.362, true);//TODO set positions
         arm = new LinkageArm(hardwareMap.servo.get("linkage"), 175, 236);
         armServo = new AxonServo(hardwareMap.servo.get("armservo"), hardwareMap.analogInput.get("axonin"));
@@ -55,11 +59,15 @@ public class NewRedAutoWhite extends LinearOpMode {
         servoController.addState("high",new double[]{1,0.748,0,0.62});
         servoController.addState("intakeNew",new double[]{0.300,0.29,0,0.1});
 
+        //ROADRUNNER INIT
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startPose = new Pose2d(12, -65, Math.toRadians(90));
         drive.setPoseEstimate(startPose);
+        //SERVOS INIT
         claw.setPosition(0f);
         servoController.setState("transferIntake");
+
+        //TRAJECTORIEs
         TrajectorySequence preloads = drive.trajectorySequenceBuilder(new Pose2d(12, -65, Math.toRadians(90)))
                 .setReversed(true)
                 .lineTo(new Vector2d(12,-43))
@@ -101,6 +109,8 @@ public class NewRedAutoWhite extends LinearOpMode {
                 .splineTo(new Vector2d(-8.95,-60),Math.toRadians(0))
                 .splineToConstantHeading(new Vector2d(47,-35),Math.toRadians(92.07))
                 .build();
+
+        //PROP DETECTION CAMERA INIT
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, webcamName), cameraMonitorViewId);
         propDetectionRed = new PropDetectionRed();
