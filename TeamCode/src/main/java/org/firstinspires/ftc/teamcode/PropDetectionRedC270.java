@@ -30,9 +30,10 @@ public class PropDetectionRedC270 extends OpenCvPipeline {
         Core.bitwise_and(input, input, maskedInputMat, binaryMat);
 
         // Define the coordinates of three rectangles
-        Rect rect1 = new Rect(140, 330, 200, 200);
-        Rect rect3 = new Rect(940, 330, 200, 200);
-        Rect rect2 = new Rect(580, 320, 130, 150);
+        Rect rect1 = new Rect(0, 0, 210, 480);
+        Rect rect2 = new Rect(210, 0, 210, 480);
+        Rect rect3 = new Rect(420, 0, 210, 480);
+
 
         // Draw rectangles on the output frame
         drawRectangle(maskedInputMat, rect1, new Scalar(255, 0, 0));

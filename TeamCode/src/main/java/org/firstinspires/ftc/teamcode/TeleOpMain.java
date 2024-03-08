@@ -48,8 +48,9 @@ public class TeleOpMain extends OpMode {
         servoController.addState("high",new double[]{0.31722,0.748,-1,0.595});
         servoController.addState("mid",new double[]{0.556,0.748,-1,0.595});
         servoController.addState("intakeNew",new double[]{0.300,0.3188,0.592,0.75});
+        servoController.addState("intakeNew",new double[]{0.300,0.3188,0.592,0.75});
 
-        servoController.addState("intake",new double[]{0.88,0.322,0.592,0.005});
+        servoController.addState("intakeStack",new double[]{0.88,0.2994,0.592,0.0096666});
 
         drone = hardwareMap.servo.get("drone");
         drone.setPosition(0.753f);

@@ -60,92 +60,46 @@ public class NewRedAutoWhite extends LinearOpMode {
         drive.setPoseEstimate(startPose);
         claw.setPosition(0f);
         servoController.setState("transferIntake");
-        TrajectorySequence tsMid = drive.trajectorySequenceBuilder(new Pose2d(12, -65, Math.toRadians(90)))
+        TrajectorySequence preloads = drive.trajectorySequenceBuilder(new Pose2d(12, -65, Math.toRadians(90)))
+                .setReversed(true)
                 .lineTo(new Vector2d(12,-43))
+                .UNSTABLE_addTemporalMarkerOffset(0,()->{
+                    servoController.setState("intakeNew");
+                })
+                .UNSTABLE_addTemporalMarkerOffset(0.7,()->{
+                    claw.halfOpen();
+                })
                 //purple pixel
-                .waitSeconds(1)
-                .lineToSplineHeading(new Pose2d(44,-35,Math.toRadians(180)))
+                .waitSeconds(0.5f)
+                .addDisplacementMarker(()->{
+                    claw.close();
+                    servoController.setState("transferIntake");
+                })
+                .lineToSplineHeading(new Pose2d(47,-35,Math.toRadians(0)))
+                .UNSTABLE_addTemporalMarkerOffset(0.5f,()->{
+                    servoController.setState("high");
+                })
+                .addDisplacementMarker(()->{
+                    claw.open();
+                })
                 //yellow pixel
-                .waitSeconds(1)
-                //first cycle
-                .splineTo(new Vector2d(8.95, -60), Math.toRadians(178.00))
-                .splineTo(new Vector2d(-24,-59),Math.toRadians(180))
-                .splineToConstantHeading(new Vector2d(-58.02, -36), Math.toRadians(92.07))
-                .waitSeconds(1)
-                .setReversed(true)
-                .lineToSplineHeading(new Pose2d(-28,-59,Math.toRadians(180)))
-                .lineTo(new Vector2d(-8.95,-60))
-                .splineToConstantHeading(new Vector2d(44,-35),Math.toRadians(92.07))
-                .setReversed(false)
-                //second cycle
-                .splineTo(new Vector2d(8.95, -60), Math.toRadians(178.00))
-                .splineTo(new Vector2d(-24,-59),Math.toRadians(180))
-                .splineToConstantHeading(new Vector2d(-58.02, -36), Math.toRadians(92.07))
-                .waitSeconds(1)
-                .setReversed(true)
-                .lineToSplineHeading(new Pose2d(-28,-59,Math.toRadians(180)))
-                .lineTo(new Vector2d(-8.95,-60))
-                .splineToConstantHeading(new Vector2d(44,-35),Math.toRadians(92.07))
-                .waitSeconds(1)
-                .setReversed(false)
+                .waitSeconds(0.75f)
+                .addDisplacementMarker(()->{
+                    servoController.setState("transferIntake");
+                })
                 .build();
-        TrajectorySequence tsLeft = drive.trajectorySequenceBuilder(new Pose2d(12, -65, Math.toRadians(90)))
-                .lineTo(new Vector2d(12,-43))
-                //purple pixel
-                .waitSeconds(1)
-                .lineToSplineHeading(new Pose2d(44,-35,Math.toRadians(180)))
-                //yellow pixel
-                .waitSeconds(1)
-                //first cycle
+        TrajectorySequence pickup = drive.trajectorySequenceBuilder(new Pose2d(47,-35,Math.toRadians(0)))
+                .setReversed(true)
                 .splineTo(new Vector2d(8.95, -60), Math.toRadians(178.00))
                 .splineTo(new Vector2d(-24,-59),Math.toRadians(180))
                 .splineToConstantHeading(new Vector2d(-58.02, -36), Math.toRadians(92.07))
                 .waitSeconds(1)
-                .setReversed(true)
-                .lineToSplineHeading(new Pose2d(-28,-59,Math.toRadians(180)))
-                .lineTo(new Vector2d(-8.95,-60))
-                .splineToConstantHeading(new Vector2d(44,-35),Math.toRadians(92.07))
-                .setReversed(false)
-                //second cycle
-                .splineTo(new Vector2d(8.95, -60), Math.toRadians(178.00))
-                .splineTo(new Vector2d(-24,-59),Math.toRadians(180))
-                .splineToConstantHeading(new Vector2d(-58.02, -36), Math.toRadians(92.07))
-                .waitSeconds(1)
-                .setReversed(true)
-                .lineToSplineHeading(new Pose2d(-28,-59,Math.toRadians(180)))
-                .lineTo(new Vector2d(-8.95,-60))
-                .splineToConstantHeading(new Vector2d(44,-35),Math.toRadians(92.07))
-                .waitSeconds(1)
-                .setReversed(false)
                 .build();
-        TrajectorySequence tsRight = drive.trajectorySequenceBuilder(new Pose2d(12, -65, Math.toRadians(90)))
-                .lineTo(new Vector2d(12,-43))
-                //purple pixel
-                .waitSeconds(1)
-                .lineToSplineHeading(new Pose2d(44,-35,Math.toRadians(180)))
-                //yellow pixel
-                .waitSeconds(1)
-                //first cycle
-                .splineTo(new Vector2d(8.95, -60), Math.toRadians(178.00))
-                .splineTo(new Vector2d(-24,-59),Math.toRadians(180))
-                .splineToConstantHeading(new Vector2d(-58.02, -36), Math.toRadians(92.07))
-                .waitSeconds(1)
-                .setReversed(true)
-                .lineToSplineHeading(new Pose2d(-28,-59,Math.toRadians(180)))
-                .lineTo(new Vector2d(-8.95,-60))
-                .splineToConstantHeading(new Vector2d(44,-35),Math.toRadians(92.07))
+        TrajectorySequence dropoff = drive.trajectorySequenceBuilder(new Pose2d(-58.02,-36,Math.toRadians(0)))
                 .setReversed(false)
-                //second cycle
-                .splineTo(new Vector2d(8.95, -60), Math.toRadians(178.00))
-                .splineTo(new Vector2d(-24,-59),Math.toRadians(180))
-                .splineToConstantHeading(new Vector2d(-58.02, -36), Math.toRadians(92.07))
-                .waitSeconds(1)
-                .setReversed(true)
-                .lineToSplineHeading(new Pose2d(-28,-59,Math.toRadians(180)))
-                .lineTo(new Vector2d(-8.95,-60))
-                .splineToConstantHeading(new Vector2d(44,-35),Math.toRadians(92.07))
-                .waitSeconds(1)
-                .setReversed(false)
+                .splineToConstantHeading(new Vector2d(-28,-59), Math.toRadians(0))
+                .splineTo(new Vector2d(-8.95,-60),Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(47,-35),Math.toRadians(92.07))
                 .build();
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, webcamName), cameraMonitorViewId);
@@ -182,19 +136,43 @@ public class NewRedAutoWhite extends LinearOpMode {
         switch (placementPosition) {
             case RIGHT:
                 telemetry.addLine("RIGHT");
-                drive.followTrajectorySequence(tsRight);
                 break;
             case LEFT:
                 telemetry.addLine("LEFT");
-                drive.followTrajectorySequence(tsLeft);
-
                 break;
             case CENTER:
                 telemetry.addLine("CENTER");
-                drive.followTrajectorySequence(tsMid);
                 break;
         }
         telemetry.update();
 
     }
 }
+/*                        drive.trajectorySequenceBuilder(new Pose2d(12, -65, Math.toRadians(270)))
+                                .setReversed(true)
+                                .lineTo(new Vector2d(12,-43))
+                                //purple pixel
+                                .waitSeconds(1)
+                                .lineToSplineHeading(new Pose2d(47,-35,Math.toRadians(0)))
+                                //yellow pixel
+                                .waitSeconds(1)
+                                //first cycle
+                                .splineTo(new Vector2d(8.95, -60), Math.toRadians(178.00))
+                                .splineTo(new Vector2d(-24,-59),Math.toRadians(180))
+                                .splineToConstantHeading(new Vector2d(-58.02, -36), Math.toRadians(92.07))
+                                .waitSeconds(1)
+                                .setReversed(false)
+                                .splineToConstantHeading(new Vector2d(-28,-59), Math.toRadians(0))
+                                .splineTo(new Vector2d(-8.95,-60),Math.toRadians(0))
+                                .splineToConstantHeading(new Vector2d(47,-35),Math.toRadians(92.07))
+                                //second cycle
+                                .setReversed(true)
+                                .splineTo(new Vector2d(8.95, -60), Math.toRadians(178.00))
+                                .splineTo(new Vector2d(-24,-59),Math.toRadians(180))
+                                .splineToConstantHeading(new Vector2d(-58.02, -36), Math.toRadians(92.07))
+                                .waitSeconds(1)
+                                .setReversed(false)
+                                .splineToConstantHeading(new Vector2d(-28,-59), Math.toRadians(0))
+                                .splineTo(new Vector2d(-8.95,-60),Math.toRadians(0))
+                                .splineToConstantHeading(new Vector2d(47,-35),Math.toRadians(92.07))
+                                .build()*/
