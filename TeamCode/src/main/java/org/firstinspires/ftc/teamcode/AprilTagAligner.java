@@ -117,7 +117,7 @@ public class AprilTagAligner{
                 moveRobot(drive, strafe, turn);
             }
     }
-    public void moveRobot(double x, double y, double yaw) {
+    private void moveRobot(double x, double y, double yaw) {
         // Calculate wheel powers.
         double leftFrontPower    =  x -y -yaw;
         double rightFrontPower   =  x +y +yaw;
