@@ -49,7 +49,7 @@ public class TeleOpMain extends OpMode {
         servoController.addState("mid",new double[]{0.556,0.748,-1,0.595});
         servoController.addState("intakeNew",new double[]{0.300,0.3188,0.592,0.75});
         servoController.addState("intakeNew",new double[]{0.300,0.3188,0.592,0.75});
-
+        servoController.addState("intake",new double[]{0.88,0.322,0.592,0.005});
         servoController.addState("intakeStack",new double[]{0.88,0.2994,0.592,0.0096666});
 
         drone = hardwareMap.servo.get("drone");
@@ -76,11 +76,17 @@ public class TeleOpMain extends OpMode {
         } else if(-gamepad2.right_stick_y<-0.1) {
             armServo.setPosition(armServo.getPosition()-0.01*Math.abs(-gamepad2.right_stick_y));
         }
+        if(-gamepad1.right_stick_y>0.1) {
+            armServo.setPosition(armServo.getPosition()+0.01*Math.abs(-gamepad2.right_stick_y));
+        } else if(-gamepad1.right_stick_y<-0.1) {
+            armServo.setPosition(armServo.getPosition()-0.01*Math.abs(-gamepad2.right_stick_y));
+        }
         if(-gamepad2.left_stick_y>0.1) {
             wrist.setPosition(wrist.getPosition()+0.01*Math.abs(-gamepad2.left_stick_y));
         } else if(-gamepad2.left_stick_y<-0.1) {
             wrist.setPosition(wrist.getPosition()-0.01*Math.abs(-gamepad2.left_stick_y));
         }
+
         if(gamepad2.right_trigger>0.1) {
             arm.setPosition(arm.getPosition()+0.5*Math.abs(gamepad2.right_trigger));
         } else if(gamepad2.left_trigger>0.1) {
@@ -95,6 +101,8 @@ public class TeleOpMain extends OpMode {
 
         if(gamepad2.dpad_left){
             servoController.setState("transfer");
+
+
 
         } else if(gamepad2.dpad_up){
             if(servoController.getCurrentState() == "transferIntake"){
@@ -122,7 +130,37 @@ public class TeleOpMain extends OpMode {
         else if(gamepad2.left_bumper){
             servoController.setState("mid");
         }
+        if(gamepad1.dpad_left){
+            servoController.setState("transfer");
 
+
+
+        } else if(gamepad1.dpad_up){
+            if(servoController.getCurrentState() == "transferIntake"){
+                servoController.setState("intermediate");
+                drive.stop();
+
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            servoController.setState("high");
+        } else if(gamepad1.dpad_right){
+            claw.setPosition(0f);
+            servoController.setState("transferIntake");
+        } else if(gamepad1.dpad_down){
+            servoController.setState("intake"); // arm extended, claw open on ground.
+        } else if(gamepad1.right_bumper){
+            servoController.setState("first"); // arm extended, claw open on ground.
+        }
+        else if(gamepad1.y){
+            servoController.setState("intakeNew");
+        }
+        else if(gamepad1.left_bumper){
+            servoController.setState("mid");
+        }
         if(gamepad2.a){
             drone.setPosition(0.44f);
         }

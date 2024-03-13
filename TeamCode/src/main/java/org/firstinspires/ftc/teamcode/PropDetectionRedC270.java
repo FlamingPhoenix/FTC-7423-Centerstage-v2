@@ -30,9 +30,9 @@ public class PropDetectionRedC270 extends OpenCvPipeline {
         Core.bitwise_and(input, input, maskedInputMat, binaryMat);
 
         // Define the coordinates of three rectangles
-        Rect rect1 = new Rect(0, 0, 210, 480);
-        Rect rect2 = new Rect(210, 0, 210, 480);
-        Rect rect3 = new Rect(420, 0, 210, 480);
+        Rect rect1 = new Rect(0, 0, 430, 720);
+        Rect rect2 = new Rect(430, 0, 430, 720);
+        Rect rect3 = new Rect(860, 0, 420, 720);
 
 
         // Draw rectangles on the output frame
@@ -54,30 +54,17 @@ public class PropDetectionRedC270 extends OpenCvPipeline {
         r2.release();
         r3.release();
 
-        if(((redAmount1>redThreshold) ^ (redAmount2>redThreshold))^(redAmount3>redThreshold)){
-            if (redAmount1 > redThreshold) {
-                this.placementPosition = PlacementPosition.LEFT;
-            }
-            else if (redAmount2 > redThreshold) {
-                this.placementPosition = PlacementPosition.CENTER;
-            }
-            else{
-                this.placementPosition = PlacementPosition.RIGHT;
-            }
-            if(redAmount2>redThreshold && redAmount2>redAmount1 && redAmount2>redAmount3){
-                this.placementPosition = PlacementPosition.CENTER;
-            }
-        } else {
-            if(Math.max(redAmount1, Math.max(redAmount2, redAmount3)) == redAmount1){
-                this.placementPosition = PlacementPosition.LEFT;
-            }
-            else if(Math.max(redAmount1, Math.max(redAmount2, redAmount3)) == redAmount3){
-                this.placementPosition = PlacementPosition.RIGHT;
-            }
-            else{
-                this.placementPosition = PlacementPosition.CENTER;
-            }
+        if(redAmount1>redAmount2&&redAmount1>redAmount3) {
+            this.placementPosition = PlacementPosition.RIGHT;
         }
+        else if(redAmount1<redAmount2&&redAmount3<redAmount2){
+            this.placementPosition = PlacementPosition.CENTER;
+        }
+        else if(redAmount3>redAmount1 &&redAmount3>redAmount2){
+            this.placementPosition = PlacementPosition.LEFT;
+        }
+
+
 
         return maskedInputMat;
     }
@@ -96,7 +83,6 @@ public class PropDetectionRedC270 extends OpenCvPipeline {
     public double getRedAmount1() {
         return redAmount1;
     }
-
     public double getRedAmount2() {
         return redAmount2;
     }

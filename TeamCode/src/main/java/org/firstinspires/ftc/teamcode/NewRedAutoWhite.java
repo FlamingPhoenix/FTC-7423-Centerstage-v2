@@ -21,9 +21,9 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 public class NewRedAutoWhite extends LinearOpMode {
 
 
-    PropDetectionRed propDetectionRed;
+    PropDetectionRedC270 propDetectionRed;
     OpenCvCamera camera;
-    String webcamName = "Webcam 1";
+    String webcamName = "Webcam 2";
 
     Claw claw;
     AxonServo armServo;
@@ -39,7 +39,7 @@ public class NewRedAutoWhite extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException{
 
-        claw = new Claw(hardwareMap.servo.get("claw"), 0, 0.1234, 0.362,0.362, true);//TODO set positions
+        claw = new Claw(hardwareMap.servo.get("claw"), 0, 0.411, 0.592,0.592, true);//TODO set positions
         arm = new LinkageArm(hardwareMap.servo.get("linkage"), 175, 236);
         armServo = new AxonServo(hardwareMap.servo.get("armservo"), hardwareMap.analogInput.get("axonin"));
         wrist = new ServoDegreeController(hardwareMap.servo.get("wrist"), 300, 0.5);//TODO: set max and min (or zero pos)
@@ -56,26 +56,26 @@ public class NewRedAutoWhite extends LinearOpMode {
         servoController.addState("intakeNew",new double[]{0.300,0.29,0,0.1});
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d startPose = new Pose2d(12, -65, Math.toRadians(90));
+        Pose2d startPose = new Pose2d(12, -65, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
         claw.setPosition(0f);
         servoController.setState("transferIntake");
-        TrajectorySequence preloads = drive.trajectorySequenceBuilder(new Pose2d(12, -65, Math.toRadians(90)))
+        TrajectorySequence preloadsLeft = drive.trajectorySequenceBuilder(new Pose2d(12, -65, Math.toRadians(270)))
                 .setReversed(true)
-                .lineTo(new Vector2d(12,-43))
-                .UNSTABLE_addTemporalMarkerOffset(0,()->{
+                .lineToSplineHeading(new Pose2d(12,-51,Math.toRadians(300)))
+                .addTemporalMarker(0,()->{
                     servoController.setState("intakeNew");
                 })
-                .UNSTABLE_addTemporalMarkerOffset(0.7,()->{
+                .UNSTABLE_addTemporalMarkerOffset(0.3,()->{
                     claw.halfOpen();
                 })
                 //purple pixel
-                .waitSeconds(0.5f)
+                .waitSeconds(1)
                 .addDisplacementMarker(()->{
                     claw.close();
                     servoController.setState("transferIntake");
                 })
-                .lineToSplineHeading(new Pose2d(47,-35,Math.toRadians(0)))
+                .lineToSplineHeading(new Pose2d(66,-25,Math.toRadians(0)))
                 .UNSTABLE_addTemporalMarkerOffset(0.5f,()->{
                     servoController.setState("high");
                 })
@@ -83,27 +83,119 @@ public class NewRedAutoWhite extends LinearOpMode {
                     claw.open();
                 })
                 //yellow pixel
-                .waitSeconds(0.75f)
+                .waitSeconds(1.5f)
                 .addDisplacementMarker(()->{
                     servoController.setState("transferIntake");
                 })
                 .build();
-        TrajectorySequence pickup = drive.trajectorySequenceBuilder(new Pose2d(47,-35,Math.toRadians(0)))
+        TrajectorySequence preloadsMid = drive.trajectorySequenceBuilder(new Pose2d(12, -65, Math.toRadians(270)))
+                .setReversed(true)
+                .lineToSplineHeading(new Pose2d(12,-51,Math.toRadians(265)))
+                .addTemporalMarker(0,()->{
+                    servoController.setState("intakeNew");
+                })
+                .UNSTABLE_addTemporalMarkerOffset(0.3,()->{
+                    claw.halfOpen();
+                })
+                //purple pixel
+                .waitSeconds(0.5f)
+                .addDisplacementMarker(()->{
+                    claw.close();
+                    servoController.setState("high");
+                })
+                .lineToSplineHeading(new Pose2d(66,-31,Math.toRadians(0)))
+                .addDisplacementMarker(()->{
+                    claw.open();
+                })
+                //yellow pixel
+                .waitSeconds(1.5f)
+                .addDisplacementMarker(()->{
+                    servoController.setState("transferIntake");
+                })
+                .build();
+        TrajectorySequence preloadsRight = drive.trajectorySequenceBuilder(new Pose2d(12, -65, Math.toRadians(270)))
+                .setReversed(true)
+                .lineToSplineHeading(new Pose2d(12,-51,Math.toRadians(240)))
+                .addTemporalMarker(0,()->{
+                    servoController.setState("intakeNew");
+                })
+                .UNSTABLE_addTemporalMarkerOffset(0.3,()->{
+                    claw.halfOpen();
+                })
+                //purple pixel
+                .waitSeconds(1)
+                .addDisplacementMarker(()->{
+                    claw.close();
+                    servoController.setState("high");
+                })
+                .lineToSplineHeading(new Pose2d(66,-37,Math.toRadians(0)))
+                .addDisplacementMarker(()->{
+                    claw.open();
+                })
+                //yellow pixel
+                .waitSeconds(1.5f)
+                .build();
+
+        TrajectorySequence dropoffLeft = drive.trajectorySequenceBuilder(new Pose2d(66,-25,Math.toRadians(0)))
+                .setReversed(true)
+                .splineToConstantHeading(new Vector2d(20,-12),Math.toRadians(180))
+                .lineToConstantHeading(new Vector2d(-58,-12))
+                .waitSeconds(1)
+                .setReversed(false)
+                .lineToConstantHeading(new Vector2d(20,-12))
+                .splineToConstantHeading(new Vector2d(47,-35),Math.toRadians(-90))
+                .waitSeconds(1)
+                .setReversed(true)
+                .splineToConstantHeading(new Vector2d(20,-12),Math.toRadians(180))
+                .lineToConstantHeading(new Vector2d(-58,-12))
+                .waitSeconds(1)
+                .setReversed(false)
+                .lineToConstantHeading(new Vector2d(20,-12))
+                .splineToConstantHeading(new Vector2d(47,-35),Math.toRadians(-90))
+                .waitSeconds(1)
+                .build();
+        TrajectorySequence dropoffMid = drive.trajectorySequenceBuilder(new Pose2d(66,-31,Math.toRadians(0)))
                 .setReversed(true)
                 .splineTo(new Vector2d(8.95, -60), Math.toRadians(178.00))
                 .splineTo(new Vector2d(-24,-59),Math.toRadians(180))
                 .splineToConstantHeading(new Vector2d(-58.02, -36), Math.toRadians(92.07))
                 .waitSeconds(1)
-                .build();
-        TrajectorySequence dropoff = drive.trajectorySequenceBuilder(new Pose2d(-58.02,-36,Math.toRadians(0)))
+                .setReversed(false)
+                .splineToConstantHeading(new Vector2d(-28,-59), Math.toRadians(0))
+                .splineTo(new Vector2d(-8.95,-60),Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(47,-35),Math.toRadians(92.07))
+                //second cycle
+                .setReversed(true)
+                .splineTo(new Vector2d(8.95, -60), Math.toRadians(178.00))
+                .splineTo(new Vector2d(-24,-59),Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-58.02, -36), Math.toRadians(92.07))
+                .waitSeconds(1)
                 .setReversed(false)
                 .splineToConstantHeading(new Vector2d(-28,-59), Math.toRadians(0))
                 .splineTo(new Vector2d(-8.95,-60),Math.toRadians(0))
                 .splineToConstantHeading(new Vector2d(47,-35),Math.toRadians(92.07))
                 .build();
+        TrajectorySequence dropoffRight = drive.trajectorySequenceBuilder(new Pose2d(66,-37,Math.toRadians(0)))
+                .setReversed(true)
+                .splineToConstantHeading(new Vector2d(20,-12),Math.toRadians(180))
+                .lineToConstantHeading(new Vector2d(-58,-12))
+                .waitSeconds(1)
+                .setReversed(false)
+                .lineToConstantHeading(new Vector2d(20,-12))
+                .splineToConstantHeading(new Vector2d(47,-35),Math.toRadians(-90))
+                .waitSeconds(1)
+                .setReversed(true)
+                .splineToConstantHeading(new Vector2d(20,-12),Math.toRadians(180))
+                .lineToConstantHeading(new Vector2d(-58,-12))
+                .waitSeconds(1)
+                .setReversed(false)
+                .lineToConstantHeading(new Vector2d(20,-12))
+                .splineToConstantHeading(new Vector2d(47,-35),Math.toRadians(-90))
+                .waitSeconds(1)
+                .build();
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, webcamName), cameraMonitorViewId);
-        propDetectionRed = new PropDetectionRed();
+        propDetectionRed = new PropDetectionRedC270();
         camera.setPipeline(propDetectionRed);
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -136,14 +228,22 @@ public class NewRedAutoWhite extends LinearOpMode {
         switch (placementPosition) {
             case RIGHT:
                 telemetry.addLine("RIGHT");
+                drive.followTrajectorySequence(preloadsRight);
+                drive.followTrajectorySequence(dropoffRight);
                 break;
             case LEFT:
                 telemetry.addLine("LEFT");
+                drive.followTrajectorySequence(preloadsLeft);
+                drive.followTrajectorySequence(dropoffLeft);
                 break;
             case CENTER:
                 telemetry.addLine("CENTER");
+                drive.followTrajectorySequence(preloadsMid);
+                drive.followTrajectorySequence(dropoffMid);
                 break;
         }
+
+        //drive.followTrajectorySequence(dropoff);
         telemetry.update();
 
     }

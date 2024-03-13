@@ -50,7 +50,7 @@ public class PropTester extends LinearOpMode {
             @Override
             public void onOpened()
             {
-                camera.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(1280,720, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
