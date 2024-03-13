@@ -32,9 +32,9 @@ public class AprilTagAligner{
     final double MAX_AUTO_TURN  = 0.3;
     double drive, strafe, turn;
     double rangeError, headingError, yawError = 999.0;
-    public AprilTagAligner(HardwareMap hardwareMap){
+    public AprilTagAligner(HardwareMap hardwareMap, String webcamName){
         visionPortal = VisionPortal.easyCreateWithDefaults(
-                hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTag);
+                hardwareMap.get(WebcamName.class, webcamName), aprilTag);
         fl = hardwareMap.dcMotor.get("fl");
         bl = hardwareMap.dcMotor.get("bl");
         fr = hardwareMap.dcMotor.get("fr");
@@ -117,7 +117,7 @@ public class AprilTagAligner{
                 moveRobot(drive, strafe, turn);
             }
     }
-    public void moveRobot(double x, double y, double yaw) {
+    private void moveRobot(double x, double y, double yaw) {
         // Calculate wheel powers.
         double leftFrontPower    =  x -y -yaw;
         double rightFrontPower   =  x +y +yaw;

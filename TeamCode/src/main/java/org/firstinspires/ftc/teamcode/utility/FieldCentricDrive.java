@@ -80,6 +80,18 @@ public class FieldCentricDrive {
         fr.setPower(motorspeeed*frp);
         br.setPower(motorspeeed*brp);
     }
+    /*
+    dx = distance sensor x
+    dy = distance sensor y
+    targetx
+    targety
+    posx = 72 - dx
+    posy = -(72 - dy)
+    delta_x = targetx - posx
+    delta_y = targety - posy
+    magnitude = sqrt(delta_x^2 + delta_y^2)   * 2
+    drive(delta_x/magnitude, delta_y/magnitude, 0)
+     */
     /**
      * Drive based off of gamepad
      * More functionality because of more access to controls
@@ -165,6 +177,7 @@ public class FieldCentricDrive {
         fr.setPower(power);
         br.setPower(power);
     }
+
     /**
      * Turn to specific angle relative to starting position
      */

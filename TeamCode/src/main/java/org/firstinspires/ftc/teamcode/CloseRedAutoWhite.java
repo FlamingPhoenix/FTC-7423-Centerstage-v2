@@ -29,6 +29,7 @@ public class CloseRedAutoWhite extends LinearOpMode {
     LinkageArm arm;
     ServoDegreeController wrist;
     ServoStates servoController;
+
     final double armFloor = 0.005;
     final double wristFloor = 0.347;
     final double[] xpossR = {35.96, 29.96, 23.96};
@@ -55,15 +56,24 @@ public class CloseRedAutoWhite extends LinearOpMode {
         servoController.addState("intakeNew",new double[]{0.300,0.29,0,0.1});
 
 
+        //PROP DETECTOR CAMERA INIT
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, webcamName), cameraMonitorViewId);
         propDetectionRed = new PropDetectionRed();
         camera.setPipeline(propDetectionRed);
+
+        //APRIL TAG INIT
+
+
+        //ROADRUNNER INIT
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startPose = new Pose2d(60, 12, Math.toRadians(180));
         drive.setPoseEstimate(startPose);
+        //SERVOS INIT
         claw.setPosition(0f);
         servoController.setState("transferIntake");
+
+        //PROP DETECTION
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
