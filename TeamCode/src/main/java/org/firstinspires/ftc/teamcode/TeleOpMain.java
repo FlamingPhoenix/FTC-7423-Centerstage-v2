@@ -50,7 +50,7 @@ public class TeleOpMain extends OpMode {
         servoController.addState("intakeNew",new double[]{0.300,0.3188,0.592,0.75});
         servoController.addState("intakeNew",new double[]{0.300,0.3188,0.592,0.75});
         servoController.addState("intake",new double[]{0.88,0.322,0.592,0.005});
-        servoController.addState("intakeStack",new double[]{0.88,0.2994,0.592,0.0096666});
+        servoController.addState("intakeStack",new double[]{0.88,0.2994,0.592,0.096666});
 
         drone = hardwareMap.servo.get("drone");
         drone.setPosition(0.753f);
@@ -125,7 +125,7 @@ public class TeleOpMain extends OpMode {
             servoController.setState("first"); // arm extended, claw open on ground.
         }
         else if(gamepad2.x){
-            servoController.setState("intakeNew");
+            servoController.setState("intakeStack");
         }
         else if(gamepad2.left_bumper){
             servoController.setState("mid");

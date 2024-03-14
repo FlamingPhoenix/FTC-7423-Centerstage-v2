@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
+import java.util.concurrent.TimeUnit;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -40,8 +41,6 @@ public class AprilTagAligner{
         fr = hardwareMap.dcMotor.get("fr");
         br = hardwareMap.dcMotor.get("br");
         //reverse motors because they are facing the opposite direction
-        fr.setDirection(DcMotor.Direction.REVERSE);
-        br.setDirection(DcMotor.Direction.REVERSE);
 
     }
     public List<AprilTagDetection> getDetections(){
@@ -54,7 +53,7 @@ public class AprilTagAligner{
      * @param id the id of the tag to align to
      * @param desiredDistance the distance to the tag
      */
-    public void alignRobot(int id, double desiredDistance){
+    public void alignRobot(int id, double desiredDistance) throws InterruptedException {
         DESIRED_DISTANCE = desiredDistance;
         while(rangeError > 1.0 && headingError > 1.0 && yawError > 1.0) {
             List<AprilTagDetection> detections = getDetections();
@@ -81,42 +80,13 @@ public class AprilTagAligner{
                 turn = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
                 strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
                 moveRobot(drive, strafe, turn);
+                Thread.sleep(1000);
+
             }
         }
     }
 
-    /**
-     * Aligns the robot to the desired april tag
-     * Can be used in TeleOp
-     * @param id the id of the tag to align to
-     */
-    public void alignRobot2(int id){
-            List<AprilTagDetection> detections = getDetections();
-            for (AprilTagDetection detection : detections) {
-                if (detection.metadata != null) {
-                    if (detection.id == id) {
-                        desiredTag = detection;
-                        targetFound = true;
-                    } else {
-                        targetFound = false;
-                    }
-                } else {
-                    targetFound = false;
-                }
-            }
-            if (targetFound) {
 
-                rangeError = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
-                headingError = desiredTag.ftcPose.bearing;
-                yawError = desiredTag.ftcPose.yaw;
-
-                // Use the speed and turn "gains" to calculate how we want the robot to move.
-                drive = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-                turn = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
-                strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
-                moveRobot(drive, strafe, turn);
-            }
-    }
     private void moveRobot(double x, double y, double yaw) {
         // Calculate wheel powers.
         double leftFrontPower    =  x -y -yaw;

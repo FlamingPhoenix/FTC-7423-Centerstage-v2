@@ -30,6 +30,8 @@ public class NewRedAutoWhite extends LinearOpMode {
     LinkageArm arm;
     ServoDegreeController wrist;
     ServoStates servoController;
+
+    AprilTagAligner aligner;
     final double armFloor = 0.005;
     final double wristFloor = 0.347;
     final double[] xpossR = {35.96, 29.96, 23.96};
@@ -54,7 +56,7 @@ public class NewRedAutoWhite extends LinearOpMode {
         servoController.addState("low",new double[]{0.31733,0.41333,0,0.7});
         servoController.addState("high",new double[]{1,0.748,0,0.62});
         servoController.addState("intakeNew",new double[]{0.300,0.29,0,0.1});
-
+        servoController.addState("intakeStack",new double[]{0.88,0.2994,0.592,0.096666});
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startPose = new Pose2d(12, -65, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
@@ -94,20 +96,21 @@ public class NewRedAutoWhite extends LinearOpMode {
                 .addTemporalMarker(0,()->{
                     servoController.setState("intakeNew");
                 })
-                .UNSTABLE_addTemporalMarkerOffset(0.3,()->{
+                .addDisplacementMarker(()->{
                     claw.halfOpen();
                 })
-                //purple pixel
                 .waitSeconds(0.5f)
                 .addDisplacementMarker(()->{
                     claw.close();
-                    servoController.setState("high");
+                    servoController.setState("transferIntake");
                 })
                 .lineToSplineHeading(new Pose2d(66,-31,Math.toRadians(0)))
+                .UNSTABLE_addTemporalMarkerOffset(0.4,()->{
+                    servoController.setState("high");
+                })
                 .addDisplacementMarker(()->{
                     claw.open();
                 })
-                //yellow pixel
                 .waitSeconds(1.5f)
                 .addDisplacementMarker(()->{
                     servoController.setState("transferIntake");
@@ -156,25 +159,15 @@ public class NewRedAutoWhite extends LinearOpMode {
                 .build();
         TrajectorySequence dropoffMid = drive.trajectorySequenceBuilder(new Pose2d(66,-31,Math.toRadians(0)))
                 .setReversed(true)
-                .splineTo(new Vector2d(8.95, -60), Math.toRadians(178.00))
-                .splineTo(new Vector2d(-24,-59),Math.toRadians(180))
-                .splineToConstantHeading(new Vector2d(-58.02, -36), Math.toRadians(92.07))
+                .splineToConstantHeading(new Vector2d(8.95, -69), Math.toRadians(178.00))
+                .splineToConstantHeading(new Vector2d(-24,-69),Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-40.02, -28), Math.toRadians(92.07))
+                .addTemporalMarker(1,()->{
+                    servoController.setState("intakeStack");
+                })
                 .waitSeconds(1)
-                .setReversed(false)
-                .splineToConstantHeading(new Vector2d(-28,-59), Math.toRadians(0))
-                .splineTo(new Vector2d(-8.95,-60),Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(47,-35),Math.toRadians(92.07))
-                //second cycle
-                .setReversed(true)
-                .splineTo(new Vector2d(8.95, -60), Math.toRadians(178.00))
-                .splineTo(new Vector2d(-24,-59),Math.toRadians(180))
-                .splineToConstantHeading(new Vector2d(-58.02, -36), Math.toRadians(92.07))
-                .waitSeconds(1)
-                .setReversed(false)
-                .splineToConstantHeading(new Vector2d(-28,-59), Math.toRadians(0))
-                .splineTo(new Vector2d(-8.95,-60),Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(47,-35),Math.toRadians(92.07))
                 .build();
+
         TrajectorySequence dropoffRight = drive.trajectorySequenceBuilder(new Pose2d(66,-37,Math.toRadians(0)))
                 .setReversed(true)
                 .splineToConstantHeading(new Vector2d(20,-12),Math.toRadians(180))
@@ -191,6 +184,25 @@ public class NewRedAutoWhite extends LinearOpMode {
                 .setReversed(false)
                 .lineToConstantHeading(new Vector2d(20,-12))
                 .splineToConstantHeading(new Vector2d(47,-35),Math.toRadians(-90))
+                .waitSeconds(1)
+                .build();
+        TrajectorySequence score = drive.trajectorySequenceBuilder(new Pose2d(-40.02,-28,Math.toRadians(0)))
+                .setReversed(false)
+                .addTemporalMarker(()->{
+                    servoController.setState("transferIntake");
+                })
+                .splineToConstantHeading(new Vector2d(-28,-59), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(-8.95,-59),Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(63,-35),Math.toRadians(92.07))
+                .build();
+        TrajectorySequence intake = drive.trajectorySequenceBuilder(new Pose2d(63,-35,Math.toRadians(0)))
+                .setReversed(true)
+                .splineToConstantHeading(new Vector2d(8.95, -69), Math.toRadians(178.00))
+                .splineToConstantHeading(new Vector2d(-24,-69),Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-40.02, -28), Math.toRadians(92.07))
+                .addTemporalMarker(1,()->{
+                    servoController.setState("intakeStack");
+                })
                 .waitSeconds(1)
                 .build();
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -224,6 +236,8 @@ public class NewRedAutoWhite extends LinearOpMode {
         waitForStart();
 
         PlacementPosition placementPosition = propDetectionRed.getPlacementPosition();
+        camera.closeCameraDevice();
+        aligner = new AprilTagAligner(hardwareMap,"Webcam 1");
         int detection = 1;
         switch (placementPosition) {
             case RIGHT:
@@ -233,13 +247,18 @@ public class NewRedAutoWhite extends LinearOpMode {
                 break;
             case LEFT:
                 telemetry.addLine("LEFT");
-                drive.followTrajectorySequence(preloadsLeft);
-                drive.followTrajectorySequence(dropoffLeft);
+                aligner.alignRobot(8,6);
+
                 break;
             case CENTER:
                 telemetry.addLine("CENTER");
                 drive.followTrajectorySequence(preloadsMid);
                 drive.followTrajectorySequence(dropoffMid);
+                //aligner.alignRobot(8,6);
+                drive.followTrajectorySequence(score);
+                aligner.alignRobot(5,3);
+                drive.followTrajectorySequence(intake);
+                drive.followTrajectorySequence(score);
                 break;
         }
 
