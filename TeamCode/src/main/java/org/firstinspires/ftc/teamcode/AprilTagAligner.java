@@ -6,11 +6,14 @@ import com.qualcomm.robotcore.util.Range;
 import java.util.concurrent.TimeUnit;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class AprilTagAligner{
     private VisionPortal visionPortal;
@@ -34,8 +37,10 @@ public class AprilTagAligner{
     double drive, strafe, turn;
     double rangeError, headingError, yawError = 999.0;
     public AprilTagAligner(HardwareMap hardwareMap, String webcamName){
-        visionPortal = VisionPortal.easyCreateWithDefaults(
-                hardwareMap.get(WebcamName.class, webcamName), aprilTag);
+        visionPortal = new VisionPortal.Builder()
+                .setCamera(hardwareMap.get(WebcamName.class, webcamName))
+                .addProcessor(aprilTag)
+                .build();
         fl = hardwareMap.dcMotor.get("fl");
         bl = hardwareMap.dcMotor.get("bl");
         fr = hardwareMap.dcMotor.get("fr");
@@ -65,8 +70,6 @@ public class AprilTagAligner{
                     } else {
                         targetFound = false;
                     }
-                } else {
-                    targetFound = false;
                 }
             }
             if (targetFound) {
@@ -83,6 +86,7 @@ public class AprilTagAligner{
                 Thread.sleep(1000);
 
             }
+            Thread.sleep(30);
         }
     }
 
@@ -112,5 +116,22 @@ public class AprilTagAligner{
         bl.setPower(leftBackPower);
         br.setPower(rightBackPower);
     }
+    private void    setManualExposure(int exposureMS, int gain) throws InterruptedException {
+        // Wait for the camera to be open, then use the controls
+
+        if (visionPortal == null) {
+            return;
+        }
+            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+            if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+                exposureControl.setMode(ExposureControl.Mode.Manual);
+                Thread.sleep(50);
+            }
+            exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
+            Thread.sleep(20);
+            GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+            gainControl.setGain(gain);
+            Thread.sleep(20);
+        }
 
 }
