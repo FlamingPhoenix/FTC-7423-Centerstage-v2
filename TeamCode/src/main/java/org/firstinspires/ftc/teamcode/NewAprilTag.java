@@ -112,7 +112,14 @@ public class NewAprilTag extends LinearOpMode
     private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
     private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
+    double rangeError, headingError, yawError = 999.0;  //  Initialize the error values to a large number.
 
+    public void initCamera(String webcamname){
+
+        initAprilTag(webcamname);
+
+        setManualExposure(6, 250);
+    }
     public void align(int tag)
     {
         boolean targetFound     = false;    // Set to true when an AprilTag target is detected
@@ -121,7 +128,6 @@ public class NewAprilTag extends LinearOpMode
         double  turn            = 0;        // Desired turning power/speed (-1 to +1)
 
         // Initialize the Apriltag Detection process
-        initAprilTag();
 
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must match the names assigned during the robot configuration.
@@ -138,9 +144,7 @@ public class NewAprilTag extends LinearOpMode
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-
-        if (USE_WEBCAM)
-            setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
+  // Use low exposure time to reduce motion blur
 
         // Wait for driver to press start
         telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
@@ -148,7 +152,7 @@ public class NewAprilTag extends LinearOpMode
         telemetry.update();
         waitForStart();
 
-        while (opModeIsActive())
+        while (rangeError > 0.1 && headingError > 1.0 && yawError > 0.1 && !isStopRequested())
         {
             targetFound = false;
             desiredTag  = null;
@@ -175,9 +179,9 @@ public class NewAprilTag extends LinearOpMode
             if (targetFound) {
 
                 // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-                double rangeError = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
-                double headingError = desiredTag.ftcPose.bearing;
-                double yawError = desiredTag.ftcPose.yaw;
+                rangeError = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
+                headingError = desiredTag.ftcPose.bearing;
+                yawError = desiredTag.ftcPose.yaw;
 
                 // Use the speed and turn "gains" to calculate how we want the robot to move.
                 drive = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
@@ -231,7 +235,7 @@ public class NewAprilTag extends LinearOpMode
     /**
      * Initialize the AprilTag processor.
      */
-    public void initAprilTag() {
+    public void initAprilTag(String webcamname) {
         // Create the AprilTag processor by using a builder.
         aprilTag = new AprilTagProcessor.Builder().build();
 
@@ -246,7 +250,7 @@ public class NewAprilTag extends LinearOpMode
 
         // Create the vision portal by using a builder.
         visionPortal = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .setCamera(hardwareMap.get(WebcamName.class, webcamname))
                 .addProcessor(aprilTag)
                 .build();
 
