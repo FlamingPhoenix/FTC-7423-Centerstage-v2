@@ -18,7 +18,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous
-public class NewRedAutoWhite extends LinearOpMode {
+public class NewRedAutoWhite extends NewAprilTag {
 
 
     PropDetectionRedC270 propDetectionRed;
@@ -237,7 +237,7 @@ public class NewRedAutoWhite extends LinearOpMode {
 
         PlacementPosition placementPosition = propDetectionRed.getPlacementPosition();
         camera.closeCameraDevice();
-        aligner = new AprilTagAligner(hardwareMap,"Webcam 1");
+        //aligner = new AprilTagAligner(hardwareMap,"Webcam 1");
         int detection = 1;
         switch (placementPosition) {
             case RIGHT:
@@ -247,8 +247,7 @@ public class NewRedAutoWhite extends LinearOpMode {
                 break;
             case LEFT:
                 telemetry.addLine("LEFT");
-                aligner.alignRobot(5,6);
-
+                align(5);
                 break;
             case CENTER:
                 telemetry.addLine("CENTER");
@@ -256,7 +255,7 @@ public class NewRedAutoWhite extends LinearOpMode {
                 drive.followTrajectorySequence(dropoffMid);
                 //aligner.alignRobot(8,6);
                 drive.followTrajectorySequence(score);
-                aligner.alignRobot(5,3);
+                //aligner.alignRobot(5,3);
                 drive.followTrajectorySequence(intake);
                 drive.followTrajectorySequence(score);
                 break;
