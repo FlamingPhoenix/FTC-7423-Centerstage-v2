@@ -89,7 +89,7 @@ public class FieldCentricDrive {
     posy = -(72 - dy)
     delta_x = targetx - posx
     delta_y = targety - posy
-    magnitude = sqrt(delta_x^2 + delta_y^2)   * 2
+    magnitude = sqrt(delta_x^2 + delta_y^2)   * 1.4
     drive(delta_x/magnitude, delta_y/magnitude, 0)
      */
     /**

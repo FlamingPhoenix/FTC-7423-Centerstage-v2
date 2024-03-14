@@ -55,7 +55,7 @@ public class AprilTagAligner{
      */
     public void alignRobot(int id, double desiredDistance) throws InterruptedException {
         DESIRED_DISTANCE = desiredDistance;
-        while(rangeError > 1.0 && headingError > 1.0 && yawError > 1.0) {
+        while(rangeError > 2.0 && headingError > 5.0 && yawError > 2.0) {
             List<AprilTagDetection> detections = getDetections();
             for (AprilTagDetection detection : detections) {
                 if (detection.metadata != null) {
