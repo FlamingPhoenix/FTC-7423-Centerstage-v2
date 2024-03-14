@@ -247,7 +247,7 @@ public class NewRedAutoWhite extends LinearOpMode {
                 break;
             case LEFT:
                 telemetry.addLine("LEFT");
-                aligner.alignRobot(8,6);
+                aligner.alignRobot(5,6);
 
                 break;
             case CENTER:

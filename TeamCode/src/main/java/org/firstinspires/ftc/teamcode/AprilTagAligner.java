@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.Thread.sleep;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
@@ -35,11 +37,15 @@ public class AprilTagAligner{
     final double MAX_AUTO_TURN  = 0.3;
     double drive, strafe, turn;
     double rangeError, headingError, yawError = 999.0;
-    public AprilTagAligner(HardwareMap hardwareMap, String webcamName){
+    public AprilTagAligner(HardwareMap hardwareMap, String webcamName) throws InterruptedException {
+        aprilTag = new AprilTagProcessor.Builder().build();
+        aprilTag.setDecimation(2);
+
         visionPortal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, webcamName))
                 .addProcessor(aprilTag)
                 .build();
+        setManualExposure(6,250);
         fl = hardwareMap.dcMotor.get("fl");
         bl = hardwareMap.dcMotor.get("bl");
         fr = hardwareMap.dcMotor.get("fr");
@@ -61,7 +67,7 @@ public class AprilTagAligner{
      */
     public void alignRobot(int id, double desiredDistance) throws InterruptedException {
         DESIRED_DISTANCE = desiredDistance;
-        while(rangeError > 2.0 && headingError > 5.0 && yawError > 2.0) {
+        while(rangeError > 0.1 && headingError > 2.0 && yawError > 0.1) {
             List<AprilTagDetection> detections = getDetections();
             for (AprilTagDetection detection : detections) {
                 if (detection.metadata != null) {
@@ -85,7 +91,7 @@ public class AprilTagAligner{
                 strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
                 moveRobot(drive, strafe, turn);
             }
-            Thread.sleep(30);
+            sleep(30);
         }
     }
 
@@ -150,16 +156,28 @@ public class AprilTagAligner{
         if (visionPortal == null) {
             return;
         }
+
+        // Make sure camera is streaming before we try to set the exposure controls
+        if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+
+            while ((visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                sleep(20);
+            }
+
+        }
+
+        // Set camera controls unless we are stopping.
+
             ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
             if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
                 exposureControl.setMode(ExposureControl.Mode.Manual);
-                Thread.sleep(50);
+                sleep(50);
             }
             exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
-            Thread.sleep(20);
+            sleep(20);
             GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
             gainControl.setGain(gain);
-            Thread.sleep(20);
-        }
+            sleep(20);
 
+    }
 }
