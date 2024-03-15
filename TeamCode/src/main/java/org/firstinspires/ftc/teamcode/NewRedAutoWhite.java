@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -41,7 +40,7 @@ public class NewRedAutoWhite extends NewAprilTag {
     @Override
     public void runOpMode() throws InterruptedException{
 
-        claw = new Claw(hardwareMap.servo.get("claw"), 0.29, 0.411, 0.592,0.592, true);//TODO set positions
+        //claw = new Claw(hardwareMap.servo.get("claw"), 0.29, 0.411, 0.592,0.592, true);//TODO set positions
         arm = new LinkageArm(hardwareMap.servo.get("linkage"), 175, 236);
         armServo = new AxonServo(hardwareMap.servo.get("armservo"), hardwareMap.analogInput.get("axonin"));
         wrist = new ServoDegreeController(hardwareMap.servo.get("wrist"), 300, 0.5);//TODO: set max and min (or zero pos)
@@ -252,14 +251,14 @@ public class NewRedAutoWhite extends NewAprilTag {
                 break;
             case LEFT:
                 telemetry.addLine("LEFT");
-                align(5,7);
+                alignBack(5,7);
                 break;
             case CENTER:
                 telemetry.addLine("CENTER");
                 drive.followTrajectorySequence(preloadsMid);
                 drive.followTrajectorySequence(dropoffMid);
                 drive.followTrajectorySequence(score);
-                align(6,6);
+                alignBack(6,6);
                 drive.followTrajectorySequence(intake);
                 drive.followTrajectorySequence(score);
                 break;
