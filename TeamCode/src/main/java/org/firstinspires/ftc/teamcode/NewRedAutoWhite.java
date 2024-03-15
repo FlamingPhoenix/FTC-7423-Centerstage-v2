@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -24,7 +25,7 @@ public class NewRedAutoWhite extends NewAprilTag {
     OpenCvCamera camera;
     String webcamName = "Webcam 2";
 
-    Claw claw;
+    Servo claw;
     AxonServo armServo;
     LinkageArm arm;
     ServoDegreeController wrist;
@@ -39,7 +40,7 @@ public class NewRedAutoWhite extends NewAprilTag {
     final double[] spikePlaceY = {3, 9, 29};
     @Override
     public void runOpMode() throws InterruptedException{
-
+        claw = hardwareMap.servo.get("claw");
         //claw = new Claw(hardwareMap.servo.get("claw"), 0.29, 0.411, 0.592,0.592, true);//TODO set positions
         arm = new LinkageArm(hardwareMap.servo.get("linkage"), 175, 236);
         armServo = new AxonServo(hardwareMap.servo.get("armservo"), hardwareMap.analogInput.get("axonin"));
@@ -73,12 +74,11 @@ public class NewRedAutoWhite extends NewAprilTag {
                     servoController.setState("intakeNew");
                 })
                 .UNSTABLE_addTemporalMarkerOffset(0.3,()->{
-                    servoController.setState("halfClaw");
+                    claw.setPosition(0.411);
                 })
                 //purple pixel
                 .waitSeconds(1)
                 .addDisplacementMarker(()->{
-                    servoController.setState("closeClaw");
                     servoController.setState("transferIntake");
                 })
                 .lineToSplineHeading(new Pose2d(66,-25,Math.toRadians(0)))
@@ -86,7 +86,7 @@ public class NewRedAutoWhite extends NewAprilTag {
                     servoController.setState("high");
                 })
                 .addDisplacementMarker(()->{
-                    servoController.setState("openClaw");
+                    claw.setPosition(0.592);
                 })
                 //yellow pixel
                 .waitSeconds(1.5f)
@@ -94,29 +94,31 @@ public class NewRedAutoWhite extends NewAprilTag {
                     servoController.setState("transferIntake");
                 })
                 .build();
-        TrajectorySequence preloadsMid = drive.trajectorySequenceBuilder(new Pose2d(12, -65, Math.toRadians(270)))
+        TrajectorySequence preloadsMidOne = drive.trajectorySequenceBuilder(new Pose2d(12, -65, Math.toRadians(270)))
                 .setReversed(true)
                 .lineToSplineHeading(new Pose2d(12,-51,Math.toRadians(265)))
                 .addTemporalMarker(0,()->{
                     servoController.setState("intakeNew");
                 })
-                .addDisplacementMarker(()->{
-                    claw.halfOpen();
+                .addTemporalMarker(0.4f,()->{
+                    claw.setPosition(0.411);
                 })
                 .waitSeconds(0.5f)
                 .addDisplacementMarker(()->{
-                    claw.close();
                     servoController.setState("transferIntake");
                 })
-                .lineToSplineHeading(new Pose2d(66,-31,Math.toRadians(0)))
-                .UNSTABLE_addTemporalMarkerOffset(0.4,()->{
+                .build();
+        TrajectorySequence preloadsMidTwo = drive.trajectorySequenceBuilder(new Pose2d(12, -51, Math.toRadians(265)))
+                .setReversed(true)
+                .addTemporalMarker(1.2,()->{
                     servoController.setState("high");
                 })
-                .addDisplacementMarker(()->{
-                    claw.open();
+                .lineToSplineHeading(new Pose2d(66,-31,Math.toRadians(0)))
+                .addTemporalMarker(()->{
+                    claw.setPosition(0.592);
                 })
                 .waitSeconds(1.5f)
-                .addDisplacementMarker(()->{
+                .addTemporalMarker(()->{
                     servoController.setState("transferIntake");
                 })
                 .build();
@@ -127,17 +129,17 @@ public class NewRedAutoWhite extends NewAprilTag {
                     servoController.setState("intakeNew");
                 })
                 .UNSTABLE_addTemporalMarkerOffset(0.3,()->{
-                    claw.halfOpen();
+                    //claw.halfOpen();
                 })
                 //purple pixel
                 .waitSeconds(1)
                 .addDisplacementMarker(()->{
-                    claw.close();
+                    //claw.close();
                     servoController.setState("high");
                 })
                 .lineToSplineHeading(new Pose2d(66,-37,Math.toRadians(0)))
                 .addDisplacementMarker(()->{
-                    claw.open();
+                    //claw.open();
                 })
                 //yellow pixel
                 .waitSeconds(1.5f)
@@ -166,9 +168,9 @@ public class NewRedAutoWhite extends NewAprilTag {
                 .splineToConstantHeading(new Vector2d(8.95, -69), Math.toRadians(178.00))
                 .splineToConstantHeading(new Vector2d(-24,-69),Math.toRadians(180))
                 .splineToConstantHeading(new Vector2d(-40.02, -28), Math.toRadians(92.07))
-                .addTemporalMarker(1,()->{
+                /*.addTemporalMarker(1,()->{
                     servoController.setState("intakeStack");
-                })
+                })*/
                 .waitSeconds(1)
                 .build();
 
@@ -255,7 +257,8 @@ public class NewRedAutoWhite extends NewAprilTag {
                 break;
             case CENTER:
                 telemetry.addLine("CENTER");
-                drive.followTrajectorySequence(preloadsMid);
+                drive.followTrajectorySequence(preloadsMidOne);
+                drive.followTrajectorySequence(preloadsMidTwo);
                 drive.followTrajectorySequence(dropoffMid);
                 drive.followTrajectorySequence(score);
                 alignBack(6,6);
