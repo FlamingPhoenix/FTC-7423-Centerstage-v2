@@ -31,7 +31,7 @@ public class NewRedAutoWhite extends NewAprilTag {
     ServoDegreeController wrist;
     ServoStates servoController;
 
-    AprilTagAligner aligner;
+
     final double armFloor = 0.005;
     final double wristFloor = 0.347;
     final double[] xpossR = {35.96, 29.96, 23.96};
@@ -55,6 +55,7 @@ public class NewRedAutoWhite extends NewAprilTag {
         servoController.addState("intermediate",new double[]{0.836,-1,0,0.4});
         servoController.addState("low",new double[]{0.31733,0.41333,0,0.7});
         servoController.addState("high",new double[]{1,0.748,0,0.62});
+
         servoController.addState("intakeNew",new double[]{0.300,0.29,0,0.1});
         servoController.addState("intakeStack",new double[]{0.88,0.2994,0.592,0.096666});
 
@@ -251,15 +252,14 @@ public class NewRedAutoWhite extends NewAprilTag {
                 break;
             case LEFT:
                 telemetry.addLine("LEFT");
-                align(5);
+                align(5,7);
                 break;
             case CENTER:
                 telemetry.addLine("CENTER");
                 drive.followTrajectorySequence(preloadsMid);
                 drive.followTrajectorySequence(dropoffMid);
-                //aligner.alignRobot(8,6);
                 drive.followTrajectorySequence(score);
-                //aligner.alignRobot(5,3);
+                align(6,6);
                 drive.followTrajectorySequence(intake);
                 drive.followTrajectorySequence(score);
                 break;
