@@ -41,7 +41,7 @@ public class NewRedAutoWhite extends NewAprilTag {
     @Override
     public void runOpMode() throws InterruptedException{
 
-        claw = new Claw(hardwareMap.servo.get("claw"), 0, 0.411, 0.592,0.592, true);//TODO set positions
+        claw = new Claw(hardwareMap.servo.get("claw"), 0.29, 0.411, 0.592,0.592, true);//TODO set positions
         arm = new LinkageArm(hardwareMap.servo.get("linkage"), 175, 236);
         armServo = new AxonServo(hardwareMap.servo.get("armservo"), hardwareMap.analogInput.get("axonin"));
         wrist = new ServoDegreeController(hardwareMap.servo.get("wrist"), 300, 0.5);//TODO: set max and min (or zero pos)
@@ -57,6 +57,10 @@ public class NewRedAutoWhite extends NewAprilTag {
         servoController.addState("high",new double[]{1,0.748,0,0.62});
         servoController.addState("intakeNew",new double[]{0.300,0.29,0,0.1});
         servoController.addState("intakeStack",new double[]{0.88,0.2994,0.592,0.096666});
+
+        servoController.addState("closeClaw", new double[]{-1,-1,0.29,-1});
+        servoController.addState("halfClaw", new double[]{-1,-1,0.411,-1});
+        servoController.addState("openClaw", new double[]{-1,-1,0.592,-1});
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startPose = new Pose2d(12, -65, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
@@ -69,12 +73,12 @@ public class NewRedAutoWhite extends NewAprilTag {
                     servoController.setState("intakeNew");
                 })
                 .UNSTABLE_addTemporalMarkerOffset(0.3,()->{
-                    claw.halfOpen();
+                    servoController.setState("halfClaw");
                 })
                 //purple pixel
                 .waitSeconds(1)
                 .addDisplacementMarker(()->{
-                    claw.close();
+                    servoController.setState("closeClaw");
                     servoController.setState("transferIntake");
                 })
                 .lineToSplineHeading(new Pose2d(66,-25,Math.toRadians(0)))
@@ -82,7 +86,7 @@ public class NewRedAutoWhite extends NewAprilTag {
                     servoController.setState("high");
                 })
                 .addDisplacementMarker(()->{
-                    claw.open();
+                    servoController.setState("openClaw");
                 })
                 //yellow pixel
                 .waitSeconds(1.5f)

@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.Math.abs;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -181,7 +183,7 @@ public class NewAprilTag extends LinearOpMode
                 double rangeError = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
                 double headingError = desiredTag.ftcPose.bearing;
                 double yawError = desiredTag.ftcPose.yaw;
-                if(rangeError < 0.1 && headingError < 2.0 && yawError < 0.1){
+                if(abs(rangeError) < 0.1 && abs(headingError) < 2.0 && abs(yawError) < 0.1){
                     break;
                 }
 
@@ -216,9 +218,9 @@ public class NewAprilTag extends LinearOpMode
         double rightBackPower    =  x -y +yaw;
 
         // Normalize wheel powers to be less than 1.0
-        double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-        max = Math.max(max, Math.abs(leftBackPower));
-        max = Math.max(max, Math.abs(rightBackPower));
+        double max = Math.max(abs(leftFrontPower), abs(rightFrontPower));
+        max = Math.max(max, abs(leftBackPower));
+        max = Math.max(max, abs(rightBackPower));
 
         if (max > 1.0) {
             leftFrontPower /= max;

@@ -22,7 +22,6 @@ public class Claw {
         this.closePos = closePos;
         this.restPos = restPos;
         clawposs = new double[]{closePos, halfOpenPos, openPos};
-        claw.setPosition(openPos);
     }
     /**
      * Initialize Claw
@@ -40,7 +39,6 @@ public class Claw {
         this.closePos = closePos;
         this.throwError = throwError;
         clawposs = new double[]{closePos, halfOpenPos, openPos};
-        claw.setPosition(openPos);
     }
     public void open(){
         claw.setPosition(openPos);
