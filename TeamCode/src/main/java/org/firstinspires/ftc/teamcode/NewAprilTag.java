@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -110,9 +111,11 @@ public class NewAprilTag extends LinearOpMode
     private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
     private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
+    ElapsedTime timer = new ElapsedTime();           // Used to time the loop
 
     public void alignBack(int tag, double distance)
     {
+        timer.reset();
         boolean targetFound     = false;    // Set to true when an AprilTag target is detected
         double  drive           = 0;        // Desired forward power/speed (-1 to +1)
         double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
@@ -176,7 +179,7 @@ public class NewAprilTag extends LinearOpMode
                 turn = -Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
                 strafe = -Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
 
-                if(drive<0.1f && turn<0.05f && strafe<0.1f){
+                if((drive<0.1f && turn<0.05f && strafe<0.1f) || timer.milliseconds() > 1250){
                     break;
                 }
             }
@@ -270,6 +273,7 @@ public class NewAprilTag extends LinearOpMode
     }
     public void alignFront(int tag, double distance)
     {
+        timer.reset();
         boolean targetFound     = false;    // Set to true when an AprilTag target is detected
         double  drive           = 0;        // Desired forward power/speed (-1 to +1)
         double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
@@ -335,7 +339,7 @@ public class NewAprilTag extends LinearOpMode
                 turn = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
                 strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
 
-                if(drive<0.1f && turn<0.05f && strafe<0.1f){
+                if((drive<0.1f && turn<0.05f && strafe<0.1f) || timer.milliseconds() > 1250){
                     break;
                 }
             }
