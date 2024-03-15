@@ -18,7 +18,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous
-public class NewRedAutoWhite extends NewAprilTag {
+public class NewRedAutoWhite extends NewAprilTagBackup {
 
 
     PropDetectionRedC270 propDetectionRed;
@@ -58,6 +58,7 @@ public class NewRedAutoWhite extends NewAprilTag {
 
         servoController.addState("intakeNew",new double[]{0.300,0.29,0,0.1});
         servoController.addState("intakeStack",new double[]{0.88,0.2994,0.592,0.096666});
+        servoController.addState("scanApril",new double[]{0.88,0.644,0.592,0.096666});
 
         servoController.addState("closeClaw", new double[]{-1,-1,0.29,-1});
         servoController.addState("halfClaw", new double[]{-1,-1,0.411,-1});
@@ -119,7 +120,7 @@ public class NewRedAutoWhite extends NewAprilTag {
                 })
                 .waitSeconds(1.5f)
                 .addTemporalMarker(()->{
-                    servoController.setState("transferIntake");
+                    servoController.setState("scanApril");
                 })
                 .build();
         TrajectorySequence preloadsRight = drive.trajectorySequenceBuilder(new Pose2d(12, -65, Math.toRadians(270)))
@@ -168,9 +169,9 @@ public class NewRedAutoWhite extends NewAprilTag {
                 .splineToConstantHeading(new Vector2d(8.95, -69), Math.toRadians(178.00))
                 .splineToConstantHeading(new Vector2d(-24,-69),Math.toRadians(180))
                 .splineToConstantHeading(new Vector2d(-40.02, -28), Math.toRadians(92.07))
-                /*.addTemporalMarker(1,()->{
-                    servoController.setState("intakeStack");
-                })*/
+                .addTemporalMarker(1,()->{
+                    servoController.setState("scanApril");
+                })
                 .waitSeconds(1)
                 .build();
 
@@ -199,7 +200,15 @@ public class NewRedAutoWhite extends NewAprilTag {
                 })
                 .splineToConstantHeading(new Vector2d(-28,-59), Math.toRadians(0))
                 .splineToConstantHeading(new Vector2d(-8.95,-59),Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(63,-35),Math.toRadians(92.07))
+                .splineToConstantHeading(new Vector2d(59,-35),Math.toRadians(92.07))
+                .addTemporalMarker(2,() -> {
+                    servoController.setState("high");
+                })
+                .waitSeconds(0.4)
+                .addTemporalMarker(()->{
+                    claw.setPosition(0.592);
+                })
+
                 .build();
         TrajectorySequence intake = drive.trajectorySequenceBuilder(new Pose2d(63,-35,Math.toRadians(0)))
                 .setReversed(true)
@@ -211,6 +220,7 @@ public class NewRedAutoWhite extends NewAprilTag {
                 })
                 .waitSeconds(1)
                 .build();
+        //preloadmid1,2    dropoffmid score intake
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, webcamName), cameraMonitorViewId);
         propDetectionRed = new PropDetectionRedC270();
@@ -228,7 +238,7 @@ public class NewRedAutoWhite extends NewAprilTag {
             public void onError(int errorCode) {}
         });
 
-
+        //initall();
         while (!isStarted()) {
             telemetry.addData("ROTATION: ", propDetectionRed.getPlacementPosition());
             telemetry.addData("Red Amount 1: ", propDetectionRed.getRedAmount1());
@@ -238,7 +248,6 @@ public class NewRedAutoWhite extends NewAprilTag {
 
             telemetry.update();
         }
-
         waitForStart();
 
         PlacementPosition placementPosition = propDetectionRed.getPlacementPosition();
@@ -260,9 +269,20 @@ public class NewRedAutoWhite extends NewAprilTag {
                 drive.followTrajectorySequence(preloadsMidOne);
                 drive.followTrajectorySequence(preloadsMidTwo);
                 drive.followTrajectorySequence(dropoffMid);
+                alignFront(8,6);
+                servoController.setState("transferIntake");
+                drive.setPoseEstimate(new Pose2d(-59,-36,Math.toRadians(0)));
+                sleep(500);
+                claw.close();
                 drive.followTrajectorySequence(score);
                 alignBack(6,6);
+                drive.setPoseEstimate(new Pose2d(57,-42,Math.toRadians(0)));
                 drive.followTrajectorySequence(intake);
+                alignFront(8,6);
+                servoController.setState("transferIntake");
+                drive.setPoseEstimate(new Pose2d(-59,-36,Math.toRadians(0)));
+                sleep(500);
+                claw.close();
                 drive.followTrajectorySequence(score);
                 break;
         }

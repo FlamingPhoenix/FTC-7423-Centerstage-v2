@@ -87,7 +87,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 
-public class NewAprilTag extends LinearOpMode
+public class NewAprilTagBackup extends LinearOpMode
 {
     // Adjust these numbers to suit your robot.
     final double DESIRED_DISTANCE = 6; //  this is how close the camera should get to the target (inches)
@@ -143,10 +143,10 @@ public class NewAprilTag extends LinearOpMode
         telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
-        waitForStart();
+        //waitForStart();
 
         timer.reset();
-        while (timer.milliseconds() < 3500)
+        while (opModeIsActive())
         {
             boolean x = false;
             targetFound = false;
@@ -275,21 +275,22 @@ public class NewAprilTag extends LinearOpMode
     }
     public void alignFront(int tag, double distance)
     {
+        timer.reset();
         boolean targetFound     = false;    // Set to true when an AprilTag target is detected
         double  drive           = 0;        // Desired forward power/speed (-1 to +1)
         double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
         double  turn            = 0;        // Desired turning power/speed (-1 to +1)
 
         // Initialize the Apriltag Detection process
-        initAprilTagFront();
+        initAprilTag();
 
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must match the names assigned during the robot configuration.
         // step (using the FTC Robot Controller app on the phone).
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "fl");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "fr");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "bl");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "br");
+        leftFrontDrive  = hardwareMap.get(DcMotor.class, "bl");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "br");
+        leftBackDrive  = hardwareMap.get(DcMotor.class, "fl");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "fr");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
@@ -303,10 +304,9 @@ public class NewAprilTag extends LinearOpMode
         telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
-        waitForStart();
+        //waitForStart();
 
-        timer.reset();
-        while (timer.milliseconds() < 3500 && opModeIsActive())
+        while (opModeIsActive())
         {
             boolean x = false;
             targetFound = false;
@@ -344,12 +344,11 @@ public class NewAprilTag extends LinearOpMode
                 if((abs(drive)<0.1f && abs(turn)<0.05f && abs(strafe)<0.1f) || timer.milliseconds() > 3250){
                     break;
                 }
-
-                moveRobot(drive, strafe, turn);
             }
             telemetry.update();
 
             // Apply desired axes motions to the drivetrain.
+            moveRobot(drive, strafe, turn);
             sleep(10);
 
         }

@@ -34,34 +34,19 @@ public class MeepMeepTesting {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 9.5)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(12, -65, Math.toRadians(270)))
+                        drive.trajectorySequenceBuilder(new Pose2d(12, -51, Math.toRadians(265)))
                                 .setReversed(true)
-                                .lineTo(new Vector2d(12,-43))
-                                //purple pixel
-                                .waitSeconds(1)
-                                .lineToSplineHeading(new Pose2d(47,-35,Math.toRadians(0)))
-                                //yellow pixel
-                                .waitSeconds(1)
-                                //first cycle
-                                .splineTo(new Vector2d(8.95, -60), Math.toRadians(178.00))
-                                .splineTo(new Vector2d(-24,-59),Math.toRadians(180))
-                                .splineToConstantHeading(new Vector2d(-58.02, -36), Math.toRadians(92.07))
-                                .waitSeconds(1)
-                                .setReversed(false)
-                                .splineToConstantHeading(new Vector2d(-28,-66), Math.toRadians(-10))
-                                .splineToConstantHeading(new Vector2d(-8.95,-60),Math.toRadians(0))
-                                .splineToConstantHeading(new Vector2d(47,-35),Math.toRadians(92.07))
-                                //second cycle
-                                .setReversed(true)
-                                .splineTo(new Vector2d(8.95, -60), Math.toRadians(178.00))
-                                .splineTo(new Vector2d(-24,-59),Math.toRadians(180))
-                                .splineToConstantHeading(new Vector2d(-58.02, -36), Math.toRadians(92.07))
-                                .waitSeconds(1)
-                                .setReversed(false)
-                                .splineToConstantHeading(new Vector2d(-28,-59), Math.toRadians(0))
-                                .splineTo(new Vector2d(-8.95,-60),Math.toRadians(0))
-                                .splineToConstantHeading(new Vector2d(47,-35),Math.toRadians(92.07))
-
+                                .addTemporalMarker(1.2,()->{
+                                   // servoController.setState("high");
+                                })
+                                .lineToSplineHeading(new Pose2d(66,-31,Math.toRadians(0)))
+                                .addTemporalMarker(()->{
+                                    //claw.setPosition(0.592);
+                                })
+                                .waitSeconds(1.5f)
+                                .addTemporalMarker(()->{
+                                    //servoController.setState("transferIntake");
+                                })
                                 .build()
                 );
         //Declare trajectory: STARTING POSE STARTING DIRECTION
