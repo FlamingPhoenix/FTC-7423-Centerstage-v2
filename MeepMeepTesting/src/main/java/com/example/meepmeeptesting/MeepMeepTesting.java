@@ -34,19 +34,15 @@ public class MeepMeepTesting {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 9.5)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(12, -51, Math.toRadians(265)))
+                        drive.trajectorySequenceBuilder(new Pose2d(66,-37,Math.toRadians(0)))
                                 .setReversed(true)
-                                .addTemporalMarker(1.2,()->{
-                                   // servoController.setState("high");
+                                .splineToConstantHeading(new Vector2d(8.95, -69), Math.toRadians(178.00))
+                                .splineToConstantHeading(new Vector2d(-24,-69),Math.toRadians(180))
+                                .splineToConstantHeading(new Vector2d(-40.02, -28), Math.toRadians(92.07))
+                                .addTemporalMarker(1,()->{
+                                    //servoController.setState("scanApril");
                                 })
-                                .lineToSplineHeading(new Pose2d(66,-31,Math.toRadians(0)))
-                                .addTemporalMarker(()->{
-                                    //claw.setPosition(0.592);
-                                })
-                                .waitSeconds(1.5f)
-                                .addTemporalMarker(()->{
-                                    //servoController.setState("transferIntake");
-                                })
+                                .waitSeconds(1)
                                 .build()
                 );
         //Declare trajectory: STARTING POSE STARTING DIRECTION

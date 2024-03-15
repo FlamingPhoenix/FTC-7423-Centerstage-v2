@@ -68,22 +68,25 @@ public class NewRedAutoWhite extends NewAprilTagBackup {
         drive.setPoseEstimate(startPose);
         claw.setPosition(0f);
         servoController.setState("transferIntake");
-        TrajectorySequence preloadsLeft = drive.trajectorySequenceBuilder(new Pose2d(12, -65, Math.toRadians(270)))
+        TrajectorySequence preloadsLeftOne = drive.trajectorySequenceBuilder(new Pose2d(12, -65, Math.toRadians(270)))
                 .setReversed(true)
                 .lineToSplineHeading(new Pose2d(12,-51,Math.toRadians(300)))
                 .addTemporalMarker(0,()->{
                     servoController.setState("intakeNew");
                 })
-                .UNSTABLE_addTemporalMarkerOffset(0.3,()->{
+                .addTemporalMarker(0.4f,()->{
                     claw.setPosition(0.411);
                 })
                 //purple pixel
-                .waitSeconds(1)
+                .waitSeconds(.5)
                 .addDisplacementMarker(()->{
                     servoController.setState("transferIntake");
                 })
+                .build();
+        TrajectorySequence preloadsLeftTwo = drive.trajectorySequenceBuilder(new Pose2d(12, -51, Math.toRadians(300)))
+                .setReversed(true)
                 .lineToSplineHeading(new Pose2d(66,-25,Math.toRadians(0)))
-                .UNSTABLE_addTemporalMarkerOffset(0.5f,()->{
+                .addTemporalMarker(1.2,()->{
                     servoController.setState("high");
                 })
                 .addDisplacementMarker(()->{
@@ -91,8 +94,8 @@ public class NewRedAutoWhite extends NewAprilTagBackup {
                 })
                 //yellow pixel
                 .waitSeconds(1.5f)
-                .addDisplacementMarker(()->{
-                    servoController.setState("transferIntake");
+                .addTemporalMarker(()->{
+                    servoController.setState("scanApril");
                 })
                 .build();
         TrajectorySequence preloadsMidOne = drive.trajectorySequenceBuilder(new Pose2d(12, -65, Math.toRadians(270)))
@@ -114,7 +117,7 @@ public class NewRedAutoWhite extends NewAprilTagBackup {
                 .addTemporalMarker(1.2,()->{
                     servoController.setState("high");
                 })
-                .lineToSplineHeading(new Pose2d(66,-31,Math.toRadians(0)))
+                .lineToSplineHeading(new Pose2d(66,-29,Math.toRadians(0)))
                 .addTemporalMarker(()->{
                     claw.setPosition(0.592);
                 })
@@ -123,45 +126,46 @@ public class NewRedAutoWhite extends NewAprilTagBackup {
                     servoController.setState("scanApril");
                 })
                 .build();
-        TrajectorySequence preloadsRight = drive.trajectorySequenceBuilder(new Pose2d(12, -65, Math.toRadians(270)))
+        TrajectorySequence preloadsRightOne = drive.trajectorySequenceBuilder(new Pose2d(12, -65, Math.toRadians(270)))
                 .setReversed(true)
                 .lineToSplineHeading(new Pose2d(12,-51,Math.toRadians(240)))
                 .addTemporalMarker(0,()->{
                     servoController.setState("intakeNew");
                 })
-                .UNSTABLE_addTemporalMarkerOffset(0.3,()->{
-                    //claw.halfOpen();
+                .addTemporalMarker(0.3,()-> {
+                    claw.setPosition(0.411);
                 })
                 //purple pixel
                 .waitSeconds(1)
                 .addDisplacementMarker(()->{
                     //claw.close();
+                    servoController.setState("transferIntake");
+                })
+                .build();
+        TrajectorySequence preloadsRightTwo = drive.trajectorySequenceBuilder(new Pose2d(12, -51, Math.toRadians(240)))
+                .setReversed(true)
+                .addTemporalMarker(1.2,()->{
                     servoController.setState("high");
                 })
                 .lineToSplineHeading(new Pose2d(66,-37,Math.toRadians(0)))
-                .addDisplacementMarker(()->{
-                    //claw.open();
+                .addTemporalMarker(()->{
+                    claw.setPosition(0.592);
                 })
                 //yellow pixel
                 .waitSeconds(1.5f)
+                .addTemporalMarker(()->{
+                    servoController.setState("scanApril");
+                })
                 .build();
 
-        TrajectorySequence dropoffLeft = drive.trajectorySequenceBuilder(new Pose2d(66,-25,Math.toRadians(0)))
+        TrajectorySequence dropoffLeft = drive.trajectorySequenceBuilder(preloadsLeftTwo.end())
                 .setReversed(true)
-                .splineToConstantHeading(new Vector2d(20,-12),Math.toRadians(180))
-                .lineToConstantHeading(new Vector2d(-58,-12))
-                .waitSeconds(1)
-                .setReversed(false)
-                .lineToConstantHeading(new Vector2d(20,-12))
-                .splineToConstantHeading(new Vector2d(47,-35),Math.toRadians(-90))
-                .waitSeconds(1)
-                .setReversed(true)
-                .splineToConstantHeading(new Vector2d(20,-12),Math.toRadians(180))
-                .lineToConstantHeading(new Vector2d(-58,-12))
-                .waitSeconds(1)
-                .setReversed(false)
-                .lineToConstantHeading(new Vector2d(20,-12))
-                .splineToConstantHeading(new Vector2d(47,-35),Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(8.95, -69), Math.toRadians(178.00))
+                .splineToConstantHeading(new Vector2d(-24,-69),Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-40.02, -28), Math.toRadians(92.07))
+                .addTemporalMarker(1,()->{
+                    servoController.setState("scanApril");
+                })
                 .waitSeconds(1)
                 .build();
         TrajectorySequence dropoffMid = drive.trajectorySequenceBuilder(new Pose2d(66,-31,Math.toRadians(0)))
@@ -177,20 +181,12 @@ public class NewRedAutoWhite extends NewAprilTagBackup {
 
         TrajectorySequence dropoffRight = drive.trajectorySequenceBuilder(new Pose2d(66,-37,Math.toRadians(0)))
                 .setReversed(true)
-                .splineToConstantHeading(new Vector2d(20,-12),Math.toRadians(180))
-                .lineToConstantHeading(new Vector2d(-58,-12))
-                .waitSeconds(1)
-                .setReversed(false)
-                .lineToConstantHeading(new Vector2d(20,-12))
-                .splineToConstantHeading(new Vector2d(47,-35),Math.toRadians(-90))
-                .waitSeconds(1)
-                .setReversed(true)
-                .splineToConstantHeading(new Vector2d(20,-12),Math.toRadians(180))
-                .lineToConstantHeading(new Vector2d(-58,-12))
-                .waitSeconds(1)
-                .setReversed(false)
-                .lineToConstantHeading(new Vector2d(20,-12))
-                .splineToConstantHeading(new Vector2d(47,-35),Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(8.95, -69), Math.toRadians(178.00))
+                .splineToConstantHeading(new Vector2d(-24,-69),Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-40.02, -28), Math.toRadians(92.07))
+                .addTemporalMarker(1,()->{
+                    servoController.setState("scanApril");
+                })
                 .waitSeconds(1)
                 .build();
         TrajectorySequence score = drive.trajectorySequenceBuilder(new Pose2d(-40.02,-28,Math.toRadians(0)))
@@ -257,12 +253,44 @@ public class NewRedAutoWhite extends NewAprilTagBackup {
         switch (placementPosition) {
             case RIGHT:
                 telemetry.addLine("RIGHT");
-                drive.followTrajectorySequence(preloadsRight);
+                drive.followTrajectorySequence(preloadsRightOne);
+                drive.followTrajectorySequence(preloadsRightTwo);
                 drive.followTrajectorySequence(dropoffRight);
+                alignFront(8,6);
+                servoController.setState("transferIntake");
+                drive.setPoseEstimate(new Pose2d(-59,-36,Math.toRadians(0)));
+                sleep(500);
+                claw.close();
+                drive.followTrajectorySequence(score);
+                alignBack(6,6);
+                drive.setPoseEstimate(new Pose2d(57,-42,Math.toRadians(0)));
+                drive.followTrajectorySequence(intake);
+                alignFront(8,6);
+                servoController.setState("transferIntake");
+                drive.setPoseEstimate(new Pose2d(-59,-36,Math.toRadians(0)));
+                sleep(500);
+                claw.close();
+                drive.followTrajectorySequence(score);
                 break;
             case LEFT:
-                telemetry.addLine("LEFT");
-                alignBack(5,7);
+                drive.followTrajectorySequence(preloadsLeftOne);
+                drive.followTrajectorySequence(preloadsLeftTwo);
+                drive.followTrajectorySequence(dropoffLeft);
+                alignFront(8,6);
+                servoController.setState("transferIntake");
+                drive.setPoseEstimate(new Pose2d(-59,-36,Math.toRadians(0)));
+                sleep(500);
+                claw.close();
+                drive.followTrajectorySequence(score);
+                alignBack(6,6);
+                drive.setPoseEstimate(new Pose2d(57,-42,Math.toRadians(0)));
+                drive.followTrajectorySequence(intake);
+                alignFront(8,6);
+                servoController.setState("transferIntake");
+                drive.setPoseEstimate(new Pose2d(-59,-36,Math.toRadians(0)));
+                sleep(500);
+                claw.close();
+                drive.followTrajectorySequence(score);
                 break;
             case CENTER:
                 telemetry.addLine("CENTER");
