@@ -114,16 +114,10 @@ public class NewAprilTag extends LinearOpMode
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
     private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
     ElapsedTime timer = new ElapsedTime();           // Used to time the loop
-
-    public void alignBack(int tag, double distance)
-    {
-        boolean targetFound     = false;    // Set to true when an AprilTag target is detected
-        double  drive           = 0;        // Desired forward power/speed (-1 to +1)
-        double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
-        double  turn            = 0;        // Desired turning power/speed (-1 to +1)
+    public void initCameras(){
 
         // Initialize the Apriltag Detection process
-        initAprilTag();
+        initAprilTagFront();
 
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must match the names assigned during the robot configuration.
@@ -138,15 +132,23 @@ public class NewAprilTag extends LinearOpMode
 
         if (USE_WEBCAM)
             setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
+    }
+    public void alignBack(int tag, double distance)
+    {
+        boolean targetFound     = false;    // Set to true when an AprilTag target is detected
+        double  drive           = 0;        // Desired forward power/speed (-1 to +1)
+        double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
+        double  turn            = 0;        // Desired turning power/speed (-1 to +1)
+
 
         // Wait for driver to press start
         telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
-        waitForStart();
+        //waitForStart();
 
         timer.reset();
-        while (timer.milliseconds() < 3500)
+        while (opModeIsActive())
         {
             boolean x = false;
             targetFound = false;
@@ -275,38 +277,20 @@ public class NewAprilTag extends LinearOpMode
     }
     public void alignFront(int tag, double distance)
     {
+        timer.reset();
         boolean targetFound     = false;    // Set to true when an AprilTag target is detected
         double  drive           = 0;        // Desired forward power/speed (-1 to +1)
         double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
         double  turn            = 0;        // Desired turning power/speed (-1 to +1)
 
-        // Initialize the Apriltag Detection process
-        initAprilTagFront();
-
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must match the names assigned during the robot configuration.
-        // step (using the FTC Robot Controller app on the phone).
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "fl");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "fr");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "bl");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "br");
-
-        // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
-        // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
-        // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-
-
-        if (USE_WEBCAM)
-            setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
 
         // Wait for driver to press start
         telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
-        waitForStart();
+        //waitForStart();
 
-        timer.reset();
-        while (timer.milliseconds() < 3500 && opModeIsActive())
+        while (opModeIsActive())
         {
             boolean x = false;
             targetFound = false;
@@ -344,12 +328,11 @@ public class NewAprilTag extends LinearOpMode
                 if((abs(drive)<0.1f && abs(turn)<0.05f && abs(strafe)<0.1f) || timer.milliseconds() > 3250){
                     break;
                 }
-
-                moveRobot(drive, strafe, turn);
             }
             telemetry.update();
 
             // Apply desired axes motions to the drivetrain.
+            moveRobot(drive, strafe, turn);
             sleep(10);
 
         }
